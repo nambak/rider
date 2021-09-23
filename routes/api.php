@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderDetailController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/order/{orderNumber}', [OrderController::class, 'getOrderWithDetails']);
+Route::get('/order/{order}/details', [OrderDetailController::class, 'getOrderDetails']);
