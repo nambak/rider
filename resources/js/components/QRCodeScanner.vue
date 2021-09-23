@@ -1,5 +1,6 @@
 <template>
     <div>
+        <h1 class="text-center">주문서 QR코드 스캔</h1>
         <qrcode-stream @decode="onDecode" :track="paintOutline" @init="onInit"></qrcode-stream>
         <b-card title="주문내역" v-if="data" class="mt-3">
             <b-card-text>
@@ -19,16 +20,9 @@
 </template>
 
 <script>
-import {QrcodeCapture, QrcodeDropZone, QrcodeStream} from 'vue-qrcode-reader'
 
 export default {
     name: 'QRCodeScanner',
-
-    components: {
-        QrcodeStream,
-        QrcodeDropZone,
-        QrcodeCapture
-    },
 
     data() {
         return {

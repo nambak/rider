@@ -36,10 +36,13 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import Vue from "vue";
+import VueQrcodeReader from "vue-qrcode-reader";
 
 Vue.use(VueSweetalert2);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
+Vue.use(VueQrcodeReader);
 
 const app = new Vue({
     el: '#app',

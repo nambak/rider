@@ -68,7 +68,7 @@ export default {
                 const response = await axios.post(`/api/order/${this.orderId}/completed`, formData);
 
                 if (response.status === 200) {
-                    this.$swal({
+                    await this.$swal({
                         icon: 'success',
                         title: '임무 완료'
                     });
