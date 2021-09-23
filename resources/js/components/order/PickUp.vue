@@ -1,10 +1,17 @@
 <template>
     <div>
-        <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit" :track="paintOutline">
+        <h1 class="text-center">상품 QR코드 스캔</h1>
+        <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit" :track="paintOutline" v-if="!destroyed">
             <div v-show="showScanConfirmation" class="scan-confirmation">
                 <img src="/images/checkmark.svg" alt="CheckMark" width="128px">
             </div>
+            <div class="loading-indicator" v-if="loading">
+                Loading...
+            </div>
         </qrcode-stream>
+        <div class="text-center mt-2">
+            <b-button @click="reload" variant="outline-primary">QR 스캐너 새로고침</b-button>
+        </div>
         <b-card header="주문내역" class="mt-3">
             <b-card-text>
                 <ul>
@@ -42,18 +49,31 @@ export default {
             camera: 'auto',
             showScanConfirmation: false,
             isNotCompletedPickUp: true,
+            loading: false,
+            destroyed: false,
         }
     },
 
     methods: {
         async onInit (promise) {
+            this.loading = true;
+
             try {
                 await promise;
-            } catch (e) {
-                console.error(e);
+            } catch (error) {
+                console.error(error);
             } finally {
                 this.showScanConfirmation = this.camera === 'off';
+                this.loading = false;
             }
+        },
+
+        async reload() {
+            this.destroyed = true;
+
+            await this.$nextTick();
+
+            this.destroyed = false;
         },
 
         async onDecode(decodedString) {
@@ -164,6 +184,12 @@ export default {
         display: flex;
         flex-flow: row nowrap;
         justify-content: center;
+    }
+
+    .loading-indicator {
+        font-weight: bold;
+        font-size: 2rem;
+        text-align: center;
     }
 </style>
 

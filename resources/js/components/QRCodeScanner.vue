@@ -1,8 +1,14 @@
 <template>
     <div>
         <h1 class="text-center">주문서 QR코드 스캔</h1>
-        <qrcode-stream @decode="onDecode" :track="paintOutline" @init="onInit"></qrcode-stream>
-        <p class="error">{{ error }}</p>
+        <qrcode-stream @decode="onDecode" :track="paintOutline" @init="onInit" v-if="!destroyed">
+            <div class="loading-indicator" v-if="loading">
+                Loading...
+            </div>
+        </qrcode-stream>
+        <div class="text-center mt-2">
+            <b-button @click="reload" variant="outline-primary">QR 스캐너 새로고침</b-button>
+        </div>
         <b-card title="주문내역" v-if="data" class="mt-3">
             <b-card-text>
                 <p>주문번호: {{ data.order_id }}</p>
@@ -28,42 +34,39 @@ export default {
     data() {
         return {
             data: null,
-            error: '',
+            loading: false,
+            destroyed: false,
         }
     },
 
     methods: {
+        async onInit(promise) {
+            this.loading = true;
+
+            try {
+                await promise
+            } catch (error) {
+                console.error(error);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async reload() {
+            this.destroyed = true;
+
+            await this.$nextTick();
+
+            this.destroyed = false;
+        },
+
         onDecode(decodedString) {
             this.getOrderDetails(decodedString);
         },
 
-        async onInit (promise) {
-            try {
-                await promise
-            } catch (error) {
-                if (error.name === 'NotAllowedError') {
-                    this.error = "ERROR: you need to grant camera access permission"
-                } else if (error.name === 'NotFoundError') {
-                    this.error = "ERROR: no camera on this device"
-                } else if (error.name === 'NotSupportedError') {
-                    this.error = "ERROR: secure context required (HTTPS, localhost)"
-                } else if (error.name === 'NotReadableError') {
-                    this.error = "ERROR: is the camera already in use?"
-                } else if (error.name === 'OverconstrainedError') {
-                    this.error = "ERROR: installed cameras are not suitable"
-                } else if (error.name === 'StreamApiNotSupportedError') {
-                    this.error = "ERROR: Stream API is not supported in this browser"
-                } else if (error.name === 'InsecureContextError') {
-                    this.error = 'ERROR: Camera access is only permitted in secure context. Use HTTPS or localhost rather than HTTP.';
-                } else {
-                    this.error = `ERROR: Camera error (${error.name})`;
-                }
-            }
-        },
-
-        paintOutline (detectedCodes, ctx) {
+        paintOutline(detectedCodes, ctx) {
             for (const detectedCode of detectedCodes) {
-                const [ firstPoint, ...otherPoints ] = detectedCode.cornerPoints
+                const [firstPoint, ...otherPoints] = detectedCode.cornerPoints
 
                 ctx.strokeStyle = "red";
 
@@ -78,8 +81,7 @@ export default {
             }
         },
 
-        async getOrderDetails(orderNumber)
-        {
+        async getOrderDetails(orderNumber) {
             try {
                 const response = await axios.get(`/api/order/${orderNumber}`);
 
@@ -95,10 +97,17 @@ export default {
             }
         },
 
-        getOrderPickUp()
-        {
-            location.href=`/order/${this.data.id}/pick_up`;
+        getOrderPickUp() {
+            location.href = `/order/${this.data.id}/pick_up`;
         }
     }
 }
 </script>
+
+<style scoped>
+    .loading-indicator {
+        font-weight: bold;
+        font-size: 2rem;
+        text-align: center;
+    }
+</style>
