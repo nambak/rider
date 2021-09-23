@@ -1,6 +1,6 @@
 <template>
     <div>
-        <qrcode-stream @decode="onDecode" :track="paintOutline"></qrcode-stream>
+        <qrcode-stream @decode="onDecode" :track="paintOutline" @init="onInit"></qrcode-stream>
         <b-card title="주문내역" v-if="data" class="mt-3">
             <b-card-text>
                 <p>주문번호: {{ data.order_id }}</p>
@@ -39,6 +39,12 @@ export default {
     methods: {
         onDecode(decodedString) {
             this.getOrderDetails(decodedString);
+        },
+
+        onInit(promise) {
+            promise.catch(error => {
+                console.error(error.message);
+            });
         },
 
         paintOutline (detectedCodes, ctx) {
