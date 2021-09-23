@@ -42,6 +42,7 @@ export default {
         },
 
         onInit(promise) {
+            console.log('camera init');
             promise.catch(error => {
                 console.error(error.message);
             });
