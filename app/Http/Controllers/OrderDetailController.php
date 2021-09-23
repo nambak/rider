@@ -12,7 +12,6 @@ class OrderDetailController extends Controller
     public function getOrderDetails(Order $order)
     {
         $details = OrderDetail::where('order_id', $order->id)->get();
-        // $keyByCustomProductCode = $details->keyBy->custom_product_code;
 
         return OrderDetailResource::collection($details);
     }

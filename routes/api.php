@@ -22,3 +22,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/order/{orderNumber}', [OrderController::class, 'getOrderWithDetails']);
 Route::get('/order/{order}/details', [OrderDetailController::class, 'getOrderDetails']);
+Route::post('/order/{order}/completed', [OrderController::class, 'complete']);
