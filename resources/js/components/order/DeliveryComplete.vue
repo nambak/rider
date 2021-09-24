@@ -5,7 +5,6 @@
             v-if="isShow"
             v-model="picture"
             v-on:close="close"
-            startOnMounted
         ></v-easy-camera>
         <div v-if="picture">
             <b-row>
@@ -54,6 +53,12 @@ export default {
         }
     },
 
+    mounted() {
+        this.$nextTick(() => {
+            this.$refs.camera.switchCamera(true);
+        });
+    },
+
     methods: {
         onHidden() {
             this.$refs.button.focus();
@@ -100,21 +105,5 @@ export default {
             }
         }
     },
-
-    mounted() {
-        console.log('dom render complete')
-
-        this.$nextTick(() => {
-            this.$refs.camera.switchCamera();
-        });
-        // switchCamera(isLoading) {
-        //     if (!isLoading) {
-        //         this.$refs.camera.switchCamera(true);
-        //         console.log('camera is loading');
-        //     } else {
-        //         console.log('camera not loading');
-        //     }
-        // },
-    }
 }
 </script>

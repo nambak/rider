@@ -30,7 +30,7 @@
                 </ul>
                 <b-row>
                     <b-col class="text-center">
-                        <b-button variant="primary" :disabled="isNotCompletedPickUp" @click="completedPickUp">
+                        <b-button variant="primary" @click="completedPickUp">
                             상품 픽업 완료
                         </b-button>
                     </b-col>

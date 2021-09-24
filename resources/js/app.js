@@ -8,6 +8,18 @@ require('./bootstrap');
 
 window.Vue = require('vue').default;
 
+import Vue from "vue";
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+import VueQrcodeReader from 'vue-qrcode-reader';
+
+Vue.use(VueSweetalert2);
+Vue.use(BootstrapVue);
+Vue.use(IconsPlugin);
+Vue.use(VueQrcodeReader);
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -24,6 +36,7 @@ Vue.component('qr-code-scanner', require('./components/QRCodeScanner.vue').defau
 Vue.component('order-pickup', require('./components/order/PickUp.vue').default);
 Vue.component('my-orders', require('./components/order/MyOrders.vue').default);
 Vue.component('delivery-complete', require('./components/order/DeliveryComplete.vue').default);
+Vue.component('v-easy-camera', )
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -31,18 +44,6 @@ Vue.component('delivery-complete', require('./components/order/DeliveryComplete.
  * or customize the JavaScript scaffolding to fit your unique needs.
  *
  */
-
-import VueSweetalert2 from 'vue-sweetalert2';
-import 'sweetalert2/dist/sweetalert2.min.css';
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
-import Vue from "vue";
-import VueQrcodeReader from "vue-qrcode-reader";
-
-Vue.use(VueSweetalert2);
-Vue.use(BootstrapVue);
-Vue.use(IconsPlugin);
-Vue.use(VueQrcodeReader);
 
 const app = new Vue({
     el: '#app',
