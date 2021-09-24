@@ -1,7 +1,13 @@
 <template>
     <div>
-        <v-easy-camera v-if="isShow" v-model="picture" ref="camera" v-on:close="close"
-                       v-on:loading="switchCamera"></v-easy-camera>
+        <v-easy-camera
+            ref="camera"
+            v-if="isShow"
+            v-model="picture"
+            v-on:close="close"
+            v-on:loading="switchCamera"
+            startOnMounted
+        ></v-easy-camera>
         <div v-if="picture">
             <b-row>
                 <b-col class="text-center">
