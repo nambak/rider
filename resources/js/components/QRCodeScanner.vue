@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1 class="text-center">주문서 QR코드 스캔</h1>
-        <qrcode-stream @decode="onDecode" :track="paintOutline" @init="onInit" v-if="!destroyed">
+        <qrcode-stream @decode="onDecode" :track="paintOutline" @init="onInit" v-if="!destroyed" class="qrcode">
             <div class="loading-indicator" v-if="loading">
                 Loading...
             </div>
@@ -109,5 +109,9 @@ export default {
         font-weight: bold;
         font-size: 2rem;
         text-align: center;
+    }
+
+    .qrcode {
+        height: 250px;
     }
 </style>
