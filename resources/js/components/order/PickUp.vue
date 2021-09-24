@@ -150,7 +150,7 @@ export default {
 
         completedPickUp() {
             // TODO: update order pick up completed time
-            location.href = '/my_orders'
+            location.href = `/my_orders/${this.orderId}`
         },
 
         async getOrderDetails() {

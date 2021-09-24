@@ -23,5 +23,5 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/order/{order}/pick_up', [OrderController::class, 'pickup']);
-Route::get('/my_orders', [OrderController::class, 'getMyOrders']);
+Route::get('/my_orders/{order}', [OrderController::class, 'getMyOrders']);
 Route::get('/order/{order}/delivery_complete', [OrderController::class, 'deliveryComplete']);

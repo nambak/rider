@@ -24,9 +24,9 @@ class OrderController extends Controller
         return view('order.pickup', compact('order'));
     }
 
-    public function getMyOrders()
+    public function getMyOrders(Order $order)
     {
-        return view('order.my_orders');
+        return view('order.my_orders', compact('order'));
     }
 
     public function deliveryComplete(Order $order)

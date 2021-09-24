@@ -22,6 +22,8 @@
 export default {
     name: 'MyOrders',
 
+    props: ['order'],
+
     data() {
         return {
             data: [],
@@ -33,7 +35,7 @@ export default {
         // TODO: 담당자별 주문만 가자올것.
 
         try {
-            const response = await axios.get(`/api/order/${data.order_id}`);
+            const response = await axios.get(`/api/order/${this.order.order_id}`);
 
             if (response.status === 200) {
                 this.data = response.data;
@@ -52,7 +54,7 @@ export default {
             if (this.state === '픽업완료') {
                 this.createCafe24Shipment();
             } else if (this.state === '배송중') {
-                location.href = `/order/${this.data.id}/delivery_complete`;
+                location.href = `/order/${this.order.id}/delivery_complete`;
             }
         },
 

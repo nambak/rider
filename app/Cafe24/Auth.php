@@ -9,12 +9,6 @@ use Illuminate\Support\Carbon;
 class Auth
 {
     static private $baseUrl = 'https://tenminutesquad.cafe24api.com/api/v2';
-    static private $client;
-
-    public function __construct()
-    {
-        self::$client = new Client();
-    }
 
     static public function getAccessToken()
     {
@@ -29,9 +23,11 @@ class Auth
 
     static public function getRefreshToken()
     {
+        $client = new Client();
+
         $refreshToken = Cafe24Auth::orderBy('expired_at', 'desc')->first()->refresh_token;
 
-        $response = self::$client->request('POST', self::$baseUrl . '/oauth/token', [
+        $response = $client->request('POST', self::$baseUrl . '/oauth/token', [
             'headers'     => [
                 'Authorization' => 'Basic ' . base64_encode(config('cafe24.clientID') . ':'
                         . config('cafe24.secretKey')),
