@@ -89,13 +89,7 @@ export default {
 
         switchCamera(isLoading) {
             if (!isLoading) {
-                this.$nextTick(() => {
-                    try {
-                        this.$refs.camera.switchCamera();
-                    } catch (e) {
-                        console.error(e.message);
-                    }
-                });
+                this.$refs.camera.switchCamera();
             }
         },
     },
