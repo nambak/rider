@@ -1,6 +1,7 @@
 <template>
     <div>
-        <v-easy-camera v-if="isShow" v-model="picture" ref="camera" v-on:close="close" v-on:loading="switchCamera"></v-easy-camera>
+        <v-easy-camera v-if="isShow" v-model="picture" ref="camera" v-on:close="close"
+                       v-on:loading="switchCamera"></v-easy-camera>
         <div v-if="picture">
             <b-row>
                 <b-col class="text-center">
@@ -86,13 +87,17 @@ export default {
             this.busy = false;
         },
 
-        switchCamera() {
-            try {
-                this.$refs.switchCamera();
-            } catch (e) {
-                console.error(e.message);
+        switchCamera(isLoading) {
+            if (!isLoading) {
+                this.$nextTick(() => {
+                    try {
+                        this.$refs.camera.switchCamera();
+                    } catch (e) {
+                        console.error(e.message);
+                    }
+                });
             }
-        }
+        },
     },
 
     watch: {
@@ -104,7 +109,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-
-</style>
