@@ -45,11 +45,12 @@ class OrderController extends Controller
     public function persistShipment(Request $request, Order $order)
     {
         $client = new Client();
+        $accessToken = Auth::getAccessToken();
 
         $client->request('POST', 'https://tenminutesquad.cafe24api.com/api/v2/admin/shipments', [
             'headers'     => [
                 'headers' => [
-                    'Authorization'        => 'Bearer ' . Auth::getAccessToken(),
+                    'Authorization'        => 'Bearer ' . $accessToken,
                     'Content-Type'         => 'application/json',
                     'X-Cafe24-Api-Version' => '2021-09-01',
                 ],
