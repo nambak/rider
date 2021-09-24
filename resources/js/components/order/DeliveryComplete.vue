@@ -5,7 +5,6 @@
             v-if="isShow"
             v-model="picture"
             v-on:close="close"
-            v-on:loading="switchCamera"
             startOnMounted
         ></v-easy-camera>
         <div v-if="picture">
@@ -92,15 +91,6 @@ export default {
 
             this.busy = false;
         },
-
-        switchCamera(isLoading) {
-            if (!isLoading) {
-                this.$refs.camera.switchCamera(true);
-                console.log('camera is loading');
-            } else {
-                console.log('camera not loading');
-            }
-        },
     },
 
     watch: {
@@ -109,6 +99,18 @@ export default {
                 this.close();
             }
         }
+    },
+
+    mounted() {
+        console.log('dom render completed');
+        // switchCamera(isLoading) {
+        //     if (!isLoading) {
+        //         this.$refs.camera.switchCamera(true);
+        //         console.log('camera is loading');
+        //     } else {
+        //         console.log('camera not loading');
+        //     }
+        // },
     }
 }
 </script>
