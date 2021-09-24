@@ -102,7 +102,11 @@ export default {
     },
 
     mounted() {
-        console.log('dom render completed');
+        console.log('dom render complete')
+
+        this.$nextTick(() => {
+            this.$refs.camera.switchCamera();
+        });
         // switchCamera(isLoading) {
         //     if (!isLoading) {
         //         this.$refs.camera.switchCamera(true);
