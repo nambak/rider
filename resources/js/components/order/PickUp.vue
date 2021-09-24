@@ -1,7 +1,14 @@
 <template>
     <div>
         <h1 class="text-center">상품 QR코드 스캔</h1>
-        <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit" :track="paintOutline" v-if="!destroyed">
+        <qrcode-stream
+            class="qrcode"
+            @init="onInit"
+            @decode="onDecode"
+            v-if="!destroyed"
+            :camera="camera"
+            :track="paintOutline"
+        >
             <div v-show="showScanConfirmation" class="scan-confirmation">
                 <img src="/images/checkmark.svg" alt="CheckMark" width="128px">
             </div>
@@ -190,6 +197,10 @@ export default {
         font-weight: bold;
         font-size: 2rem;
         text-align: center;
+    }
+
+    .qrcode {
+        height: 250px;
     }
 </style>
 
