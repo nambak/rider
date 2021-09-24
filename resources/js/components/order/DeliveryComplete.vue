@@ -95,7 +95,7 @@ export default {
 
         switchCamera(isLoading) {
             if (!isLoading) {
-                this.$refs.camera.switchCamera();
+                this.$refs.camera.switchCamera(true);
                 console.log('camera is loading');
             } else {
                 console.log('camera not loading');
