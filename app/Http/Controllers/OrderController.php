@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Cafe24\Auth;
 use App\Models\Order;
 use App\Notifications\CompletedOrder;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -38,6 +40,31 @@ class OrderController extends Controller
 
         Notification::route('slack', config('logging.channels.slack.url'))
             ->notify(new CompletedOrder($order, $imageUrl));
+    }
+
+    public function persistShipment(Request $request, Order $order)
+    {
+        $client = new Client();
+
+        $client->request('POST', 'https://tenminutesquad.cafe24api.com/api/v2/admin/shipments', [
+            'headers'     => [
+                'headers' => [
+                    'Authorization'        => 'Bearer ' . Auth::getAccessToken(),
+                    'Content-Type'         => 'application/json',
+                    'X-Cafe24-Api-Version' => '2021-09-01',
+                ],
+            ],
+            'form_params' => [
+                'requests' => [
+                    [
+                        'tracking_no'           => '1',
+                        'shipping_company_code' => '0006',
+                        'status'                => 'shipping',
+                        'order_id'              => $order->order_id,
+                    ],
+                ],
+            ],
+        ]);
     }
 
     private function uploadImageToS3($file, $order)

@@ -33,7 +33,7 @@ export default {
         // TODO: 담당자별 주문만 가자올것.
 
         try {
-            const response = await axios.get('/api/order/20210906-0000042');
+            const response = await axios.get(`/api/order/${data.order_id}`);
 
             if (response.status === 200) {
                 this.data = response.data;
@@ -42,7 +42,7 @@ export default {
             this.$swal({
                 icon: 'error',
                 title: '오류',
-                message: e.message
+                text: e.message
             });
         }
     },
@@ -50,11 +50,26 @@ export default {
     methods: {
         startDelivery() {
             if (this.state === '픽업완료') {
-                this.state = '배송중';
+                this.createCafe24Shipment();
             } else if (this.state === '배송중') {
                 location.href = `/order/${this.data.id}/delivery_complete`;
             }
+        },
 
+        async createCafe24Shipment() {
+            try {
+                const response = await axios.post(`/api/order/${data.id}/shipment`);
+
+                if (response.status === 200) {
+                    this.state = '배송중';
+                }
+            } catch (e) {
+                this.$swal({
+                    icon: 'error',
+                    title: '오류',
+                    text: e.message,
+                });
+            }
         }
     },
 
