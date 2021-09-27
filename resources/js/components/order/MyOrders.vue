@@ -60,7 +60,9 @@ export default {
 
         async createCafe24Shipment() {
             try {
-                const response = await axios.post(`/api/order/${this.data.id}/shipment`);
+                const response = await axios.post(`https://deliver.10tenminute.xyz/api/persist_shipment`, {
+                    'order_number': this.order.order_id,
+                });
 
                 if (response.status === 200) {
                     this.state = '배송중';

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Cafe24\Auth;
 use App\Models\Order;
 use App\Notifications\CompletedOrder;
 use GuzzleHttp\Client;
@@ -10,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Notification;
+use Exception;
 
 class OrderController extends Controller
 {
@@ -36,36 +36,25 @@ class OrderController extends Controller
 
     public function complete(Request $request, Order $order)
     {
-        $imageUrl = $this->uploadImageToS3($request->image, $order);
+        try {
+            $client = new Client();
 
-        Notification::route('slack', config('logging.channels.slack.url'))
-            ->notify(new CompletedOrder($order, $imageUrl));
-    }
-
-    public function persistShipment(Request $request, Order $order)
-    {
-        $client = new Client();
-        $accessToken = Auth::getAccessToken();
-
-        $client->request('POST', 'https://tenminutesquad.cafe24api.com/api/v2/admin/shipments', [
-            'headers'     => [
-                'headers' => [
-                    'Authorization'        => 'Bearer ' . $accessToken,
-                    'Content-Type'         => 'application/json',
-                    'X-Cafe24-Api-Version' => '2021-09-01',
+            $client->post('https://deliver.10tenminute.xyz/api/update_shipment_state',[
+                'json' => [
+                    'order_number' => $order->order_id,
+                    'state' => 'shipped'
                 ],
-            ],
-            'form_params' => [
-                'requests' => [
-                    [
-                        'tracking_no'           => '1',
-                        'shipping_company_code' => '0006',
-                        'status'                => 'shipping',
-                        'order_id'              => $order->order_id,
-                    ],
-                ],
-            ],
-        ]);
+            ]);
+
+            $imageUrl = $this->uploadImageToS3($request->image, $order);
+
+            Notification::route('slack', config('logging.channels.slack.url'))
+                ->notify(new CompletedOrder($order, $imageUrl));
+        } catch (Exception $exception) {
+            return response($exception->getMessage(), $exception->getcode());
+        }
+
+        return response('success', 200);
     }
 
     private function uploadImageToS3($file, $order)
