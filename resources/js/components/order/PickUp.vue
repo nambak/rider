@@ -84,11 +84,12 @@ export default {
         },
 
         async onDecode(decodedString) {
-            this.pickUpGoods(decodedString);
-
-            this.pause();
-            await this.timeout(500);
-            this.unpause();
+            if (this.isNotCompletedPickUp) {
+                this.pickUpGoods(decodedString);
+                this.pause();
+                await this.timeout(1000);
+                this.unpause();
+            }
         },
 
         unpause() {
