@@ -23,6 +23,7 @@
                         class="d-inline-block"
                         @hidden="onHidden"
                     >
+                        <b-button variant="outline-primary" @click="reset">사진 다시 찍기</b-button>
                         <b-button variant="primary" ref="button" :disabled="busy" @click="completedDelivery">
                             사진올리고 배송완료 하기
                         </b-button>
@@ -51,12 +52,6 @@ export default {
             isShow: true,
             busy: false,
         }
-    },
-
-    mounted() {
-        this.$nextTick(() => {
-            this.$refs.camera.switchCamera(true);
-        });
     },
 
     methods: {
@@ -96,6 +91,11 @@ export default {
 
             this.busy = false;
         },
+
+        reset() {
+            this.isShow = true;
+            this.picture = null;
+        }
     },
 
     watch: {
