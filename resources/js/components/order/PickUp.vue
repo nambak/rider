@@ -53,7 +53,6 @@ export default {
     methods: {
         async onDecode(decodedString) {
             if (this.isNotCompletedPickUp) {
-                console.log(decodedString);
                 this.pickUpGoods(decodedString);
             }
         },

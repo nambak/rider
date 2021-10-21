@@ -19,7 +19,7 @@ class OrderDetailResource extends JsonResource
     {
         return [
             'product_code' => $this->custom_product_code,
-            'barcode'      => Goods::where('code', $this->custom_product_code)->first('barcode'),
+            'barcode'      => Goods::where('code', $this->custom_product_code)->first()['barcode'],
             'product_name' => $this->product_name,
             'quantity'     => $this->quantity,
             'picked'       => 0,
