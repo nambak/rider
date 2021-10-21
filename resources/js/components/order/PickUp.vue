@@ -61,7 +61,7 @@ export default {
             let index = 0;
 
             if (this.isBarcode(goodsCode)) {
-                index = this.items.findIndex(item => item.barcode == goodsCode);
+                index = this.items.findIndex(item => item.barcode === goodsCode);
             } else {
                 index = this.items.findIndex(item => item.product_code === goodsCode);
             }
@@ -91,7 +91,8 @@ export default {
         },
 
         isBarcode(code) {
-            return (code.charAt(0) === 8 && code.length === 13);
+            let barcode = code.toString();
+            return (barcode.charAt(0) === '8' && barcode.length === 13);
         },
 
         completedPickUp() {
