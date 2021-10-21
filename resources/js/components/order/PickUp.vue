@@ -129,25 +129,5 @@ export default {
     .pickup {
         text-decoration: line-through;
     }
-
-    .scan-confirmation {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(255, 255, 255, .8);
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: center;
-    }
-
-    .loading-indicator {
-        font-weight: bold;
-        font-size: 2rem;
-        text-align: center;
-    }
-
-    .qrcode {
-        height: 250px;
-    }
 </style>
 
