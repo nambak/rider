@@ -1,24 +1,9 @@
 <template>
     <div>
-        <h1 class="text-center">상품 QR코드 스캔</h1>
-        <qrcode-stream
-            class="qrcode"
-            @init="onInit"
+        <h1 class="text-center">상품 코드 스캔</h1>
+        <StreamBarcodeReader
             @decode="onDecode"
-            v-if="!destroyed"
-            :camera="camera"
-            :track="paintOutline"
-        >
-            <div v-show="showScanConfirmation" class="scan-confirmation">
-                <img src="/images/checkmark.svg" alt="CheckMark" width="128px">
-            </div>
-            <div class="loading-indicator" v-if="loading">
-                Loading...
-            </div>
-        </qrcode-stream>
-        <div class="text-center mt-2">
-            <b-button @click="reload" variant="outline-primary">QR 스캐너 새로고침</b-button>
-        </div>
+        ></StreamBarcodeReader>
         <b-card header="주문내역" class="mt-3">
             <b-card-text>
                 <ul>
@@ -41,10 +26,14 @@
 </template>
 
 <script>
+import { StreamBarcodeReader } from 'vue-barcode-reader';
+
 export default {
     name: 'PickUp',
 
     props: ['orderId'],
+
+    components: { StreamBarcodeReader },
 
     mounted() {
         this.getOrderDetails();
@@ -62,69 +51,22 @@ export default {
     },
 
     methods: {
-        async onInit (promise) {
-            this.loading = true;
-
-            try {
-                await promise;
-            } catch (error) {
-                console.error(error);
-            } finally {
-                this.showScanConfirmation = this.camera === 'off';
-                this.loading = false;
-            }
-        },
-
-        async reload() {
-            this.destroyed = true;
-
-            await this.$nextTick();
-
-            this.destroyed = false;
-        },
-
         async onDecode(decodedString) {
             if (this.isNotCompletedPickUp) {
+                console.log(decodedString);
                 this.pickUpGoods(decodedString);
-                this.pause();
-                await this.timeout(1000);
-                this.unpause();
-            }
-        },
-
-        unpause() {
-            this.camera = 'auto';
-        },
-
-        pause() {
-            this.camera = 'off';
-        },
-
-        timeout(ms) {
-            return new Promise(resolve => {
-                window.setTimeout(resolve, ms);
-            });
-        },
-
-        paintOutline (detectedCodes, ctx) {
-            for (const detectedCode of detectedCodes) {
-                const [ firstPoint, ...otherPoints ] = detectedCode.cornerPoints
-
-                ctx.strokeStyle = "red";
-
-                ctx.beginPath();
-                ctx.moveTo(firstPoint.x, firstPoint.y);
-                for (const { x, y } of otherPoints) {
-                    ctx.lineTo(x, y);
-                }
-                ctx.lineTo(firstPoint.x, firstPoint.y);
-                ctx.closePath();
-                ctx.stroke();
             }
         },
 
         pickUpGoods(goodsCode) {
-            let index = this.items.findIndex(item => item.product_code === goodsCode)
+            let index = 0;
+
+            if (this.isBarcode(goodsCode)) {
+                index = this.items.findIndex(item => item.barcode === goodsCode);
+            } else {
+                index = this.items.findIndex(item => item.product_code === goodsCode);
+            }
+
 
             if (index !== -1) {
                 if (this.items[index].picked !== this.items[index].quantity) {
@@ -147,6 +89,10 @@ export default {
             }
 
             this.checkCompletePickUp();
+        },
+
+        isBarcode(code) {
+            return (code.charAt(0) === 8 && code.length === 13);
         },
 
         completedPickUp() {

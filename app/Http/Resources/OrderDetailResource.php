@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Goods;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderDetailResource extends JsonResource
@@ -18,6 +19,7 @@ class OrderDetailResource extends JsonResource
     {
         return [
             'product_code' => $this->custom_product_code,
+            'barcode'      => Goods::where('code', $this->custom_product_code)->first('barcode'),
             'product_name' => $this->product_name,
             'quantity'     => $this->quantity,
             'picked'       => 0,
