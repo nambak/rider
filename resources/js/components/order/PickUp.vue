@@ -47,6 +47,7 @@ export default {
             isNotCompletedPickUp: true,
             loading: false,
             destroyed: false,
+            id: null,
         }
     },
 
@@ -55,6 +56,12 @@ export default {
             if (this.isNotCompletedPickUp) {
                 this.pickUpGoods(decodedString);
             }
+            if (this.id) clearTimeout(this.id);
+            this.id = setTimeout(() => {
+                if (this.text === a) {
+                    this.text = "";
+                }
+            }, 5000);
         },
 
         pickUpGoods(goodsCode) {
