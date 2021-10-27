@@ -85,12 +85,6 @@ export default {
                     })
                 }
             } else {
-                this.$swal({
-                    icon: 'error',
-                    title: '오류',
-                    text: '주문 내역에 없는 상품'
-                });
-
                 return false;
             }
 
