@@ -56,12 +56,6 @@ export default {
             if (this.isNotCompletedPickUp) {
                 this.pickUpGoods(decodedString);
             }
-            if (this.id) clearTimeout(this.id);
-            this.id = setTimeout(() => {
-                if (this.text === a) {
-                    this.text = "";
-                }
-            }, 5000);
         },
 
         pickUpGoods(goodsCode) {
@@ -73,10 +67,16 @@ export default {
                 index = this.items.findIndex(item => item.product_code === goodsCode);
             }
 
-
             if (index !== -1) {
-                if (this.items[index].picked !== this.items[index].quantity) {
-                    this.items[index].picked += 1;
+                const goods = this.items[index];
+
+                if (goods.picked !== goods.quantity) {
+                    goods.picked += 1;
+                    this.$swal({
+                        icon: 'success',
+                        title: '확인',
+                        text: goods.product_name + '(' + goods.picked + '/' + goods.quantity + ')' ,
+                    })
                 } else {
                     this.$swal({
                         icon: 'error',
