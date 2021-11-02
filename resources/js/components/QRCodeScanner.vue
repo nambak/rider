@@ -6,9 +6,6 @@
                 Loading...
             </div>
         </qrcode-stream>
-        <div class="text-center mt-2">
-            <b-button @click="reload" variant="outline-primary">QR 스캐너 새로고침</b-button>
-        </div>
         <b-card title="주문내역" v-if="data" class="mt-3">
             <b-card-text>
                 <p>주문번호: {{ data.order_id }}</p>
@@ -23,6 +20,17 @@
                 </b-col>
             </b-row>
         </b-card>
+        <b-table striped bordered :items="orders" :fields="fields" head-variant="dark" show-empty>
+            <template #empty="scope">
+                <div class="text-center">주문 내역이 없습니다.</div>
+            </template>
+            <template #cell(order_detail)="data">
+                {{ data.item.details | shortDetails }}
+            </template>
+            <template #cell(action)="data">
+                <b-button variant="outline-primary" @click="openOrderPickUp(data.item.id)">오더 픽업</b-button>
+            </template>
+        </b-table>
     </div>
 </template>
 
@@ -31,15 +39,61 @@
 export default {
     name: 'QRCodeScanner',
 
+    props: ['branchOfficeID'],
+
     data() {
         return {
             data: null,
             loading: false,
             destroyed: false,
+            orders: [],
+            fields: [
+                {
+                    key: 'order_id',
+                    label: '주문번호',
+                    sortable: false,
+                },
+                {
+                    key: 'buyer_name',
+                    label: '주문자명',
+                    sortable: false,
+                },
+                {
+                    key: 'buyer_cellphone',
+                    label: '연락처',
+                    sortable: false,
+                },
+                {
+                    key: 'order_detail',
+                    label: '주문내역',
+                    sortable: false,
+                },
+                {
+                    key: 'action',
+                    label: '',
+                    sortable: false,
+                }
+            ]
         }
     },
 
+    created() {
+        this.getOrders();
+    },
+
     methods: {
+        async getOrders() {
+            try{
+                const response = await axios.get(`/api/branch/4/orders`);
+                this.orders = response.data;
+            } catch (error) {
+                this.$swal({
+                    icon: 'error',
+                    text: error.response.data.message || error.message,
+                });
+            }
+        },
+
         async onInit(promise) {
             this.loading = true;
 
@@ -50,14 +104,6 @@ export default {
             } finally {
                 this.loading = false;
             }
-        },
-
-        async reload() {
-            this.destroyed = true;
-
-            await this.$nextTick();
-
-            this.destroyed = false;
         },
 
         onDecode(decodedString) {
@@ -99,7 +145,22 @@ export default {
 
         getOrderPickUp() {
             location.href = `/order/${this.data.id}/pick_up`;
+        },
+
+        openOrderPickUp(id)
+        {
+            window.open(`/order/${id}/pick_up`, '_blank');
         }
+    },
+
+    filters: {
+        shortDetails(details) {
+            if (details.length === 1) {
+                return details[0].product_name;
+            } else {
+                return `${details[0].product_name} 외 ${details.length - 1} 건`;
+            }
+        },
     }
 }
 </script>

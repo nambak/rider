@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BranchOffice;
 use App\Models\Order;
 use App\Notifications\CompletedOrder;
 use GuzzleHttp\Client;
@@ -55,6 +56,16 @@ class OrderController extends Controller
         }
 
         return response('success', 200);
+    }
+
+    public function filterByBranch(BranchOffice $branch)
+    {
+        return Order::whereHas('details', function ($query) use ($branch) {
+            $query->where('supplier_name', '=', $branch->name);
+        })
+            ->where('order_date', 'LIKE', now()->format('Y-m-d') . '%')
+            ->with('details')
+            ->get();
     }
 
     private function uploadImageToS3($file, $order)

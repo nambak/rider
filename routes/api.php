@@ -24,3 +24,4 @@ Route::get('/order/{orderNumber}', [OrderController::class, 'getOrderWithDetails
 Route::get('/order/{order}/details', [OrderDetailController::class, 'getOrderDetails']);
 Route::post('/order/{order}/completed', [OrderController::class, 'complete']);
 Route::post('/order/{order}/shipment', [OrderController::class, 'persistShipment']);
+Route::get('/branch/{branch}/orders', [OrderController::class, 'filterByBranch']);
