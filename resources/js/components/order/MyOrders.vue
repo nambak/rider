@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-card :header="state" :header-bg-variant="stateColor" header-text-variant="white">
+        <b-card :header="state" :header-bg-variant="stateColor" header-text-variant="white" class="mb-5">
             <b-card-text>
                 <p>주문번호: {{ data.order_id }}</p>
                 <p>주문일: {{ data.order_date }}</p>
@@ -15,6 +15,12 @@
                 </b-row>
             </b-card-text>
         </b-card>
+        <b-row>
+            <b-col class="text-center">
+                <b-button variant="warning" @click="openKakaoMapLink">카카오 맵 경로찾기</b-button>
+            </b-col>
+        </b-row>
+
     </div>
 </template>
 
@@ -28,6 +34,7 @@ export default {
         return {
             data: [],
             state: '픽업완료',
+            kakaoMapLink: '',
         }
     },
 
@@ -39,6 +46,7 @@ export default {
 
             if (response.status === 200) {
                 this.data = response.data;
+                this.getGeoLocation();
             }
         } catch (e) {
             this.$swal({
@@ -74,7 +82,25 @@ export default {
                     text: e.message,
                 });
             }
-        }
+        },
+
+        getGeoLocation() {
+            let geocoder = new kakao.maps.services.Geocoder();
+
+            geocoder.addressSearch(this.data.receiver_address_full, (result, status)  => {
+                if (status === kakao.maps.services.Status.OK) {
+                    this.kakaoMapLink =
+                        'https://map.kakao.com/link/to/'
+                        + result[0].address_name + ','
+                        + result[0].y + ','
+                        + result[0].x;
+                }
+            });
+        },
+
+        openKakaoMapLink() {
+           window.open(this.kakaoMapLink, '_blank');
+        },
     },
 
     computed: {
