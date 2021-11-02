@@ -13,6 +13,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey={{ config('kakao.apikey') }}&libraries=services"></script>
     <script src="{{ mix('js/app.js') }}" defer></script>
 
     <!-- Fonts -->
