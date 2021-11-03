@@ -63,7 +63,7 @@ class OrderController extends Controller
         return Order::whereHas('details', function ($query) use ($branch) {
             $query->where('supplier_name', '=', $branch->name);
         })
-            ->where('order_date', 'LIKE', now()->format('Y-m-d') . '%')
+            // ->where('order_date', 'LIKE', now()->format('Y-m-d') . '%')
             ->with('details')
             ->get();
     }

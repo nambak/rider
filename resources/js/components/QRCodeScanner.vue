@@ -39,7 +39,7 @@
 export default {
     name: 'QRCodeScanner',
 
-    props: ['branchOfficeID'],
+    props: ['branchOfficeId'],
 
     data() {
         return {
@@ -84,7 +84,7 @@ export default {
     methods: {
         async getOrders() {
             try{
-                const response = await axios.get(`/api/branch/4/orders`);
+                const response = await axios.get(`/api/branch/${this.branchOfficeId}/orders`);
                 this.orders = response.data;
             } catch (error) {
                 this.$swal({
