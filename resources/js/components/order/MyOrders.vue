@@ -17,7 +17,9 @@
         </b-card>
         <b-row>
             <b-col class="text-center">
-                <b-button variant="warning" @click="openKakaoMapLink">카카오 맵 경로찾기</b-button>
+                <b-button variant="warning">
+                    <a :href="kakaoMapLink" target="_blank">카카오 맵 경로찾기</a>
+                </b-button>
             </b-col>
         </b-row>
 
@@ -39,8 +41,6 @@ export default {
     },
 
     async mounted() {
-        // TODO: 담당자별 주문만 가자올것.
-
         try {
             const response = await axios.get(`/api/order/${this.order.order_id}`);
 
@@ -84,10 +84,11 @@ export default {
             }
         },
 
-        getGeoLocation() {
+        async getGeoLocation() {
             let geocoder = new kakao.maps.services.Geocoder();
 
-            geocoder.addressSearch(this.data.receiver_address_full, (result, status)  => {
+            geocoder.addressSearch(this.data.delivery.address1, (result, status)  => {
+                console.log(result);
                 if (status === kakao.maps.services.Status.OK) {
                     this.kakaoMapLink =
                         'https://map.kakao.com/link/to/'
@@ -96,10 +97,6 @@ export default {
                         + result[0].x;
                 }
             });
-        },
-
-        openKakaoMapLink() {
-           window.open(this.kakaoMapLink, '_blank');
         },
     },
 
@@ -126,7 +123,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-
-</style>
