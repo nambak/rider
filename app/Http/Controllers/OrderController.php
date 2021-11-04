@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\BranchOffice;
 use App\Models\Order;
 use App\Notifications\CompletedOrder;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Notification;
-use Exception;
 
 class OrderController extends Controller
 {
@@ -40,20 +40,22 @@ class OrderController extends Controller
         try {
             $client = new Client();
 
-            $client->post('https://deliver.10tenminute.xyz/api/update_shipment_state',[
+            $client->post('https://deliver.10tenminute.xyz/api/update_shipment_state', [
                 'json' => [
                     'order_number' => $order->order_id,
-                    'state' => 'shipped'
+                    'state'        => 'shipped',
                 ],
             ]);
-
-            $imageUrl = $this->uploadImageToS3($request->image, $order);
-
-            Notification::route('slack', config('logging.channels.slack.url'))
-                ->notify(new CompletedOrder($order, $imageUrl));
         } catch (Exception $exception) {
             return response($exception->getMessage(), $exception->getcode());
         }
+
+        $imageUrl = $this->uploadImageToS3($request->image, $order);
+
+        Notification::route('slack', config('logging.channels.slack.url'))
+            ->notify(new CompletedOrder($order, $imageUrl));
+
+        $order->delivery->update(['completed_at' => now()]);
 
         return response('success', 200);
     }
@@ -63,6 +65,9 @@ class OrderController extends Controller
         return Order::whereHas('details', function ($query) use ($branch) {
             $query->where('supplier_name', '=', $branch->name);
         })
+            ->whereHas('delivery', function ($query) {
+                $query->whereNull('completed_at');
+            })
             ->where('order_date', 'LIKE', now()->format('Y-m-d') . '%')
             ->with('details')
             ->get();

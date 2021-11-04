@@ -97,7 +97,7 @@ export default {
         },
 
         completedPickUp() {
-            // TODO: update order pick up completed time
+            axios.post(`/api/order/${this.orderId}/packed`)
             location.href = `/my_orders/${this.orderId}`
         },
 

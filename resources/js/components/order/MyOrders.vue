@@ -73,6 +73,7 @@ export default {
                 });
 
                 if (response.status === 200) {
+                    axios.post(`/api/order/${this.order.id}/start_delivery`);
                     this.state = '배송중';
                 }
             } catch (e) {

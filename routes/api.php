@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderDetailController;
 use Illuminate\Http\Request;
@@ -25,3 +26,6 @@ Route::get('/order/{order}/details', [OrderDetailController::class, 'getOrderDet
 Route::post('/order/{order}/completed', [OrderController::class, 'complete']);
 Route::post('/order/{order}/shipment', [OrderController::class, 'persistShipment']);
 Route::get('/branch/{branch}/orders', [OrderController::class, 'filterByBranch']);
+Route::post('/order/{order}/pickup', [DeliveryController::class, 'pickup']);
+Route::post('/order/{order}/packed', [DeliveryController::class, 'packed']);
+Route::post('/order/{order}/start_delivery', [DeliveryController::class, 'start']);

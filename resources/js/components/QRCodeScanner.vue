@@ -144,11 +144,11 @@ export default {
         },
 
         getOrderPickUp() {
+            axios.post(`/api/order/${this.data.id}/pickup`);
             location.href = `/order/${this.data.id}/pick_up`;
         },
 
-        openOrderPickUp(id)
-        {
+        openOrderPickUp(id) {
             window.open(`/order/${id}/pick_up`, '_blank');
         }
     },
