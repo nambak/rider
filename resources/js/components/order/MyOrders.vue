@@ -114,7 +114,7 @@ export default {
         },
 
         actionName() {
-            if (this.data.started_at === null) {
+            if (this.data.delivery.started_at === null) {
                 return '배송시작';
             } else {
                 return '배송완료';
