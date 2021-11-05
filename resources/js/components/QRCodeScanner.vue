@@ -28,7 +28,7 @@
                 {{ data.item.details | shortDetails }}
             </template>
             <template #cell(action)="data">
-                <b-button variant="outline-primary" @click="openOrderPickUp(data.item.id)">오더 픽업</b-button>
+                <b-button variant="outline-primary" @click="openOrderPickUp(data.item)">오더 픽업</b-button>
             </template>
         </b-table>
     </div>
@@ -148,8 +148,14 @@ export default {
             location.href = `/order/${this.data.id}/pick_up`;
         },
 
-        openOrderPickUp(id) {
-            window.open(`/order/${id}/pick_up`, '_blank');
+        openOrderPickUp(order) {
+
+                window.open(`/order/${order.id}/pick_up`, '_blank');
+            } else if (order.delivery.started_at === null) {
+                window.open(`/my_orders/${order.id}`, '_blank');
+            } else if (order.delivery.completed_at === null) {
+                window.open(`/order/${order.id}/delivery_complete`, '_blank');
+            }
         }
     },
 

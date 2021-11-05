@@ -37,6 +37,7 @@ export default {
             data: [],
             state: '픽업완료',
             kakaoMapLink: '',
+            actionName: '배송시작',
         }
     },
 
@@ -47,6 +48,7 @@ export default {
             if (response.status === 200) {
                 this.data = response.data;
                 this.getGeoLocation();
+                this.setAction();
             }
         } catch (e) {
             this.$swal({
@@ -59,9 +61,9 @@ export default {
 
     methods: {
         startDelivery() {
-            if (this.state === '픽업완료') {
+            if (this.actionName === '배송시작') {
                 this.createCafe24Shipment();
-            } else if (this.state === '배송중') {
+            } else if (this.actionName === '배송완료') {
                 location.href = `/order/${this.order.id}/delivery_complete`;
             }
         },
@@ -99,6 +101,16 @@ export default {
                 }
             });
         },
+
+        setAction() {
+            if (this.data) {
+                if (this.data.delivery.started_at === null) {
+                    this.actionName = '배송시작';
+                } else {
+                    this.actionName = '배송완료';
+                }
+            }
+        }
     },
 
     computed: {
@@ -112,14 +124,6 @@ export default {
                     return 'success';
             }
         },
-
-        actionName() {
-            if (this.data.delivery.started_at === null) {
-                return '배송시작';
-            } else {
-                return '배송완료';
-            }
-        }
     }
 }
 </script>

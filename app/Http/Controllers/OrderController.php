@@ -69,7 +69,7 @@ class OrderController extends Controller
                 $query->whereNull('completed_at');
             })
             ->where('order_date', 'LIKE', now()->format('Y-m-d') . '%')
-            ->with('details')
+            ->with('details', 'delivery')
             ->get();
     }
 
