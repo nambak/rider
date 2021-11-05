@@ -114,11 +114,10 @@ export default {
         },
 
         actionName() {
-            switch (this.state) {
-                case '배송중':
-                    return '배송완료';
-                default:
-                    return '배송시작';
+            if (this.data.started_at === null) {
+                return '배송시작';
+            } else {
+                return '배송완료';
             }
         }
     }
