@@ -149,12 +149,12 @@ export default {
         },
 
         openOrderPickUp(order) {
-
+            if (order.delivery.order_packed_at === null) {
                 window.open(`/order/${order.id}/pick_up`, '_blank');
             } else if (order.delivery.started_at === null) {
                 window.open(`/my_orders/${order.id}`, '_blank');
             } else if (order.delivery.completed_at === null) {
-                window.open(`/order/${order.id}/delivery_complete`, '_blank');
+                window.open(`/my_orders/${order.id}`, '_blank');
             }
         }
     },

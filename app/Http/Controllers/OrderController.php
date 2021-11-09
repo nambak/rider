@@ -8,6 +8,7 @@ use App\Notifications\CompletedOrder;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Notification;
@@ -47,7 +48,7 @@ class OrderController extends Controller
                 ],
             ]);
         } catch (Exception $exception) {
-            return response($exception->getMessage(), $exception->getcode());
+            Log::error($exception->getMessage());
         }
 
         $imageUrl = $this->uploadImageToS3($request->image, $order);
