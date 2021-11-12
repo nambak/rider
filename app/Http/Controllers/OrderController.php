@@ -38,6 +38,10 @@ class OrderController extends Controller
 
     public function complete(Request $request, Order $order)
     {
+        if ($order->delivery->completed_at) {
+            return response('이미 완료된 주문 건 입니다.', 400);
+        }
+
         try {
             $client = new Client();
 

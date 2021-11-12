@@ -82,10 +82,11 @@ export default {
                     location.href = '/home'
                 }
             } catch (e) {
+                console.log(e.response.data);
                 this.$swal({
                     icon: 'error',
                     title: '오류',
-                    text: e.message,
+                    text: (typeof e.response.data === 'object') ? e.message : e.response.data,
                 });
             }
 
