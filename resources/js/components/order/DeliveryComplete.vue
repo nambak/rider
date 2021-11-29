@@ -82,7 +82,6 @@ export default {
                     location.href = '/home'
                 }
             } catch (e) {
-                console.log(e.response.data);
                 this.$swal({
                     icon: 'error',
                     title: '오류',

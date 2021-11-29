@@ -10,7 +10,17 @@
 
                 <b-row>
                     <b-col class="text-center">
-                        <b-button variant="primary" @click="startDelivery">{{ actionName }}</b-button>
+                        <b-overlay
+                            :show="isLoading"
+                            rounded
+                            opacity="0.6"
+                            spinner-small
+                            spinner-variant="primary"
+                            class="d-inline-block"
+                            @hidden="onHidden"
+                        >
+                            <b-button variant="primary" @click="startDelivery" ref="actionButton" :disabled="isLoading">{{ actionName }}</b-button>
+                        </b-overlay>
                     </b-col>
                 </b-row>
             </b-card-text>
@@ -38,6 +48,7 @@ export default {
             state: '픽업완료',
             kakaoMapLink: '',
             actionName: '배송시작',
+            isLoading: false,
         }
     },
 
@@ -60,6 +71,9 @@ export default {
     },
 
     methods: {
+        onHidden() {
+            this.$refs.actionButton.focus();
+        },
         startDelivery() {
             if (this.actionName === '배송시작') {
                 this.createCafe24Shipment();
@@ -69,6 +83,8 @@ export default {
         },
 
         async createCafe24Shipment() {
+            this.isLoading = true;
+
             try {
                 const response = await axios.post(`https://deliver.10tenminute.xyz/api/persist_shipment`, {
                     'order_number': this.order.order_id,
@@ -78,12 +94,17 @@ export default {
                     axios.post(`/api/order/${this.order.id}/start_delivery`);
                     this.state = '배송중';
                 }
+
+                location.reload();
+
             } catch (e) {
                 this.$swal({
                     icon: 'error',
                     title: '오류',
                     text: e.message,
                 });
+            } finally {
+                this.isLoading = false;
             }
         },
 
