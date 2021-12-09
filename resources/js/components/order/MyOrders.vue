@@ -91,7 +91,7 @@ export default {
                 });
 
                 await axios.post(`/api/order/${this.order.id}/start_delivery`);
-                this.state = '배송중';
+                location.reload();
             } catch (e) {
                 this.$swal({
                     icon: 'error',
@@ -105,9 +105,7 @@ export default {
 
         async getGeoLocation() {
             let geocoder = new kakao.maps.services.Geocoder();
-
             geocoder.addressSearch(this.data.delivery.address1, (result, status)  => {
-                console.log(result);
                 if (status === kakao.maps.services.Status.OK) {
                     this.kakaoMapLink =
                         'https://map.kakao.com/link/to/'
