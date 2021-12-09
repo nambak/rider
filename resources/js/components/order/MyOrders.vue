@@ -86,14 +86,12 @@ export default {
             this.isLoading = true;
 
             try {
-                const response = await axios.post(`https://deliver.10tenminute.xyz/api/persist_shipment`, {
+                await axios.post(`https://deliver.10tenminute.xyz/api/persist_shipment`, {
                     'order_number': this.order.order_id,
                 });
 
-                if (response.status === 200) {
-                    axios.post(`/api/order/${this.order.id}/start_delivery`);
-                    this.state = '배송중';
-                }
+                await axios.post(`/api/order/${this.order.id}/start_delivery`);
+                this.state = '배송중';
             } catch (e) {
                 this.$swal({
                     icon: 'error',
@@ -102,7 +100,6 @@ export default {
                 });
             } finally {
                 this.isLoading = false;
-                location.reload();
             }
         },
 
@@ -126,6 +123,7 @@ export default {
                 if (this.data.delivery.started_at === null) {
                     this.actionName = '배송시작';
                 } else {
+                    this.state = '배송중';
                     this.actionName = '배송완료';
                 }
             }
