@@ -94,9 +94,6 @@ export default {
                     axios.post(`/api/order/${this.order.id}/start_delivery`);
                     this.state = '배송중';
                 }
-
-                location.reload();
-
             } catch (e) {
                 this.$swal({
                     icon: 'error',
@@ -105,6 +102,7 @@ export default {
                 });
             } finally {
                 this.isLoading = false;
+                location.reload();
             }
         },
 
