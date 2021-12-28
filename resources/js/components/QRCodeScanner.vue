@@ -24,11 +24,19 @@
             <template #empty="scope">
                 <div class="text-center">주문 내역이 없습니다.</div>
             </template>
+            <template #cell(reservation)="data">
+                {{ data.item.delivery.reservation }}
+            </template>
             <template #cell(order_detail)="data">
                 {{ data.item.details | shortDetails }}
             </template>
             <template #cell(action)="data">
-                <b-button variant="outline-primary" @click="openOrderPickUp(data.item)">오더 픽업</b-button>
+                <b-button
+                    variant="outline-primary"
+                    size="sm"
+                    @click="openOrderPickUp(data.item)"
+                    :disabled="isReservationTomorrow(data.item.delivery)"
+                >오더 픽업</b-button>
             </template>
         </b-table>
     </div>
@@ -52,26 +60,43 @@ export default {
                     key: 'order_id',
                     label: '주문번호',
                     sortable: false,
+                    tdClass: 'align-middle',
+                    thClass: 'text-center',
+                },
+                {
+                    key: 'reservation',
+                    label: '배송시간',
+                    sortable: false,
+                    tdClass: 'align-middle',
+                    thClass: 'text-center',
                 },
                 {
                     key: 'buyer_name',
                     label: '주문자명',
                     sortable: false,
+                    tdClass: 'align-middle',
+                    thClass: 'text-center',
                 },
                 {
                     key: 'buyer_cellphone',
                     label: '연락처',
                     sortable: false,
+                    tdClass: 'align-middle',
+                    thClass: 'text-center',
                 },
                 {
                     key: 'order_detail',
                     label: '주문내역',
                     sortable: false,
+                    tdClass: 'align-middle',
+                    thClass: 'text-center',
                 },
                 {
                     key: 'action',
                     label: '',
                     sortable: false,
+                    tdClass: 'align-middle',
+                    thClass: 'text-center',
                 }
             ]
         }
@@ -156,6 +181,10 @@ export default {
             } else if (order.delivery.completed_at === null) {
                 window.open(`/my_orders/${order.id}`, '_blank');
             }
+        },
+
+        isReservationTomorrow(delivery) {
+            return (delivery.reservation.includes('내일'));
         }
     },
 
