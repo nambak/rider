@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 
@@ -26,4 +27,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/order/{order}/pick_up', [OrderController::class, 'pickup']);
     Route::get('/my_orders/{order}', [OrderController::class, 'getMyOrders']);
     Route::get('/order/{order}/delivery_complete', [OrderController::class, 'deliveryComplete']);
+});
+
+Route::group(['middleware' => ['auth', 'role:admin']], function () {
+    Route::get('/admin/users', [UserController::class, 'index']);
 });

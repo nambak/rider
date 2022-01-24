@@ -36,8 +36,7 @@ Vue.component('qr-code-scanner', require('./components/QRCodeScanner.vue').defau
 Vue.component('order-pickup', require('./components/order/PickUp.vue').default);
 Vue.component('my-orders', require('./components/order/MyOrders.vue').default);
 Vue.component('delivery-complete', require('./components/order/DeliveryComplete.vue').default);
-Vue.component('v-easy-camera', )
-
+Vue.component('admin-users', require('./components/admin/user/List.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
