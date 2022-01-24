@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
-use Notification;
+use Illuminate\Support\Facades\Notification;
 
 class OrderController extends Controller
 {
@@ -75,6 +75,7 @@ class OrderController extends Controller
             })
             ->where('order_date', 'LIKE', now()->format('Y-m-d') . '%')
             ->with('details', 'delivery')
+            ->latest()
             ->get();
     }
 

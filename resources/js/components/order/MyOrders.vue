@@ -1,9 +1,10 @@
 <template>
     <div>
-        <b-card :header="state" :header-bg-variant="stateColor" header-text-variant="white" class="mb-5">
+        <b-card :header="order.state" :header-bg-variant="stateColor" header-text-variant="white" class="mb-5">
             <b-card-text>
                 <p>주문번호: {{ data.order_id }}</p>
                 <p>주문일: {{ data.order_date }}</p>
+                <p>고객명 : {{ data.buyer_name }}</p>
                 <p>고객연락처: {{ data.buyer_cellphone }}</p>
                 <p>주소: {{ data.receiver_address_full }}</p>
                 <p>메세지: {{ data.shipping_message }}</p>
@@ -19,7 +20,24 @@
                             class="d-inline-block"
                             @hidden="onHidden"
                         >
-                            <b-button variant="primary" @click="startDelivery" ref="actionButton" :disabled="isLoading">{{ actionName }}</b-button>
+                            <b-button
+                                v-if="order.state ==='배송전' || order.state === '배송준비'"
+                                variant="primary"
+                                @click="startDelivery"
+                                ref="actionButton"
+                                :disabled="isLoading"
+                                block
+                                size="lg"
+                            >배송시작</b-button>
+                            <b-button
+                                v-else-if="order.state === '배송중'"
+                                variant="primary"
+                                @click="completeDelivery"
+                                ref="actionButton"
+                                :disabled="isLoading"
+                                block
+                                size="lg"
+                            >배송완료</b-button>
                         </b-overlay>
                     </b-col>
                 </b-row>
@@ -45,44 +63,26 @@ export default {
     data() {
         return {
             data: [],
-            state: '픽업완료',
             kakaoMapLink: '',
             actionName: '배송시작',
             isLoading: false,
         }
     },
 
-    async mounted() {
-        try {
-            const response = await axios.get(`/api/order/${this.order.order_id}`);
-
-            if (response.status === 200) {
-                this.data = response.data;
-                this.getGeoLocation();
-                this.setAction();
-            }
-        } catch (e) {
-            this.$swal({
-                icon: 'error',
-                title: '오류',
-                text: e.message
-            });
-        }
+    mounted() {
+        this.getOrder();
     },
 
     methods: {
         onHidden() {
             this.$refs.actionButton.focus();
         },
-        startDelivery() {
-            if (this.actionName === '배송시작') {
-                this.createCafe24Shipment();
-            } else if (this.actionName === '배송완료') {
-                location.href = `/order/${this.order.id}/delivery_complete`;
-            }
+
+        completeDelivery() {
+            location.href = `/order/${this.order.id}/delivery_complete`;
         },
 
-        async createCafe24Shipment() {
+        async startDelivery() {
             this.isLoading = true;
 
             try {
@@ -93,11 +93,18 @@ export default {
                 await axios.post(`/api/order/${this.order.id}/start_delivery`);
                 location.reload();
             } catch (e) {
-                this.$swal({
-                    icon: 'error',
-                    title: '오류',
-                    text: e.message,
-                });
+                if (e.response.status === 422) {
+                    this.$swal({
+                        icon: 'error',
+                        text: '이미 처리된 주문입니다. 페이지를 새로고침 해주세요.'
+                    });
+                } else {
+                    this.$swal({
+                        icon: 'error',
+                        title: '오류',
+                        text: e.message,
+                    });
+                }
             } finally {
                 this.isLoading = false;
             }
@@ -116,21 +123,40 @@ export default {
             });
         },
 
-        setAction() {
-            if (this.data) {
-                if (this.data.delivery.started_at === null) {
-                    this.actionName = '배송시작';
-                } else {
-                    this.state = '배송중';
-                    this.actionName = '배송완료';
+        async getOrder() {
+            try {
+                const response = await axios.get(`/api/order/${this.order.order_id}`);
+
+                if (response.status === 200) {
+                    this.data = response.data;
+                    this.getGeoLocation();
                 }
+
+                if (this.data.state === '배송완료') {
+                    this.$swal({
+                        icon: 'error',
+                        title: '오류',
+                        text: '이미 배송완료된 주문입니다.',
+                        confirmButtonText: '닫기'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.href = '/home';
+                        }
+                    });
+                }
+            } catch (e) {
+                this.$swal({
+                    icon: 'error',
+                    title: '오류',
+                    text: e.message
+                });
             }
         }
     },
 
     computed: {
         stateColor() {
-            switch (this.state) {
+            switch (this.data.state) {
                 case '팍업완료':
                     return 'success';
                 case '배송중':

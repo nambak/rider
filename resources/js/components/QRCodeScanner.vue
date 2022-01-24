@@ -6,10 +6,11 @@
                 Loading...
             </div>
         </qrcode-stream>
-        <b-card title="주문내역" v-if="data" class="mt-3">
+        <b-card title="주문내역" v-if="data" class="mt-3 mb-3">
             <b-card-text>
                 <p>주문번호: {{ data.order_id }}</p>
                 <p>주문일: {{ data.order_date }}</p>
+                <p>고객명: {{ data.buyer_name }}</p>
                 <p>고객연락처: {{ data.buyer_cellphone }}</p>
                 <p>주소: {{ data.receiver_address_full }}</p>
                 <p>메세지: {{ data.shipping_message }}</p>
@@ -26,9 +27,6 @@
             </template>
             <template #cell(reservation)="data">
                 {{ data.item.delivery.reservation }}
-            </template>
-            <template #cell(order_detail)="data">
-                {{ data.item.details | shortDetails }}
             </template>
             <template #cell(action)="data">
                 <b-button
@@ -85,8 +83,8 @@ export default {
                     thClass: 'text-center',
                 },
                 {
-                    key: 'order_detail',
-                    label: '주문내역',
+                    key: 'receiver_address_full',
+                    label: '배송주소',
                     sortable: false,
                     tdClass: 'align-middle',
                     thClass: 'text-center',
