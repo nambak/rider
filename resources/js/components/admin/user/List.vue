@@ -16,9 +16,9 @@
                 </b-col>
                 <b-col></b-col>
                 <b-col class="text-right">
-                    <b-button variant="outline-primary">
+                    <b-button variant="outline-primary" v-b-modal.register>
                         <b-icon icon="person-plus-fill"></b-icon>
-                        사번생성
+                        사원등록
                     </b-button>
                     <b-button variant="outline-danger">
                         <b-icon icon="trash"></b-icon>
@@ -63,12 +63,17 @@
                 </b-col>
             </b-row>
         </b-card>
+        <user-register></user-register>
     </div>
 </template>
 
 <script>
+import UserRegister from "./Register";
+
 export default {
     name: 'List',
+
+    components: { UserRegister },
 
     data() {
         return {

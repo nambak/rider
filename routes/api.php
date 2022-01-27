@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DeliveryController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderDetailController;
 use Illuminate\Http\Request;
@@ -29,3 +31,5 @@ Route::get('/branch/{branch}/orders', [OrderController::class, 'filterByBranch']
 Route::post('/order/{order}/pickup', [DeliveryController::class, 'pickup']);
 Route::post('/order/{order}/packed', [DeliveryController::class, 'packed']);
 Route::post('/order/{order}/start_delivery', [DeliveryController::class, 'start']);
+Route::get('/admin/generate_employee_no', [EmployeeController::class, 'generateNo']);
+Route::get('/branches', [BranchController::class, 'list']);

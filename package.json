@@ -25,6 +25,9 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
+        "@vue/composition-api": "^1.4.5",
+        "@vuelidate/core": "^2.0.0-alpha.34",
+        "@vuelidate/validators": "^2.0.0-alpha.26",
         "bootstrap-vue": "^2.21.2",
         "easy-js-camera": "^2.1.0",
         "easy-vue-camera": "^1.0.5",
