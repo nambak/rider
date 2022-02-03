@@ -44,6 +44,28 @@ Vue.component('admin-users', require('./components/admin/user/List.vue').default
  *
  */
 
+Vue.mixin({
+    methods: {
+        showError(error) {
+            let errorText = error.message;
+
+            if (typeof error.response !== 'undefined') {
+                if (typeof error.response.data === 'string') {
+                    errorText = error.response.data;
+                } else if (error.response.data.message) {
+                    errorText = error.response.data.message;
+                }
+            }
+
+            this.$swal({
+                icon: 'error',
+                title: '오류',
+                text: errorText,
+            });
+        },
+    }
+})
+
 const app = new Vue({
     el: '#app',
 });

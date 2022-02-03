@@ -33,3 +33,7 @@ Route::post('/order/{order}/packed', [DeliveryController::class, 'packed']);
 Route::post('/order/{order}/start_delivery', [DeliveryController::class, 'start']);
 Route::get('/admin/generate_employee_no', [EmployeeController::class, 'generateNo']);
 Route::get('/branches', [BranchController::class, 'list']);
+Route::post('/employee', [EmployeeController::class, 'store']);
+Route::get('/employees', [EmployeeController::class, 'all']);
+Route::delete('/employees', [EmployeeController::class, 'delete']);
+Route::put('/employee/{user}', [EmployeeController::class, 'update']);
