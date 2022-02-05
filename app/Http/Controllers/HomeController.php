@@ -17,15 +17,14 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index()
     {
-        $branchOfficeID = Auth::user()->branchOffice[0]->id;
+        $branchOfficeID = isset(Auth::user()->employee) ? Auth::user()->employee->branch_id : null;
 
-        return view('home', compact('branchOfficeID'));
+        if (Auth::user()->role == 'admin') {
+            return redirect()->route('employee_list');
+        } else {
+            return view('home', compact('branchOfficeID'));
+        }
     }
 }

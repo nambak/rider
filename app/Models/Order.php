@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\NcloudAPI;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,7 +10,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $appends = ['state'];
+    protected $appends = ['state', 'region'];
 
     public function details()
     {
@@ -34,5 +35,17 @@ class Order extends Model
         }
 
         return $state;
+    }
+
+    public function getRegionAttribute()
+    {
+        $geoCode = NcloudAPI::getGeoCodeData($this->delivery->address1);
+        $geoCodeText = $geoCode[0]->y . ' ' . $geoCode[0]->x;
+
+        $result = GeoFence::whereRaw("ST_CONTAINS(zone_polygon, ST_GEOMFROMTEXT('Point($geoCodeText)'))")
+            ->select(['id', 'type', 'branch_office_id'])
+            ->first();
+
+        return $result->type;
     }
 }

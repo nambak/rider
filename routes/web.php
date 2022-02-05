@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 
@@ -30,5 +30,5 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 Route::group(['middleware' => ['auth', 'role:admin']], function () {
-    Route::get('/admin/users', [UserController::class, 'index']);
+    Route::get('/admin/users', [EmployeeController::class, 'index'])->name('employee_list');
 });

@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Hash;
 
 class EmployeeController extends Controller
 {
+    public function index()
+    {
+        return view('user.index');
+    }
+
     /**
      * Generate Employee Number.
      *

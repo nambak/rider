@@ -1,11 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.material')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <qr-code-scanner :branch-office-id="{{ $branchOfficeID }}"></qr-code-scanner>
-        </div>
-    </div>
-</div>
+    <v-app>
+        <qr-code-scanner
+            :branch-office-id="{{ $branchOfficeID }}"
+            user-name="{{ Auth::user()->name }}"
+        ></qr-code-scanner>
+    </v-app>
 @endsection

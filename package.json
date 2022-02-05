@@ -12,6 +12,7 @@
     "devDependencies": {
         "axios": "^0.21",
         "bootstrap": "^4.6.0",
+        "deepmerge": "^4.2.2",
         "jquery": "^3.6",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
@@ -22,7 +23,9 @@
         "sass-loader": "^11.0.1",
         "vue": "^2.6.12",
         "vue-loader": "^15.9.8",
-        "vue-template-compiler": "^2.6.12"
+        "vue-template-compiler": "^2.6.12",
+        "vuetify-loader": "^2.0.0-alpha.9",
+        "vuetifyjs-mix-extension": "^0.0.20"
     },
     "dependencies": {
         "@vue/composition-api": "^1.4.5",
@@ -33,6 +36,7 @@
         "easy-vue-camera": "^1.0.5",
         "vue-barcode-reader": "^0.0.3",
         "vue-qrcode-reader": "^3.0.3",
-        "vue-sweetalert2": "^5.0.2"
+        "vue-sweetalert2": "^5.0.2",
+        "vuetify": "^2.6.3"
     }
 }
