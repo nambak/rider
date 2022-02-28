@@ -15,6 +15,7 @@ Vue.use(VueQrcodeReader);
 
 // ./components/ExampleComponent.vue -> <example-component></example-component>
 Vue.component('qr-code-scanner', require('./components/QRCodeScanner.vue').default);
+Vue.component('order-pickup', require('./components/order/PickUp').default);
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))

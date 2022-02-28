@@ -71,7 +71,7 @@ class OrderController extends Controller
             $query->where('supplier_name', '=', $branch->name);
         })
             ->whereHas('delivery', function ($query) {
-                $query->whereNull('completed_at');
+                $query->whereNull('completed_at')->whereNull('started_at');
             })
             ->where('order_date', 'LIKE', now()->format('Y-m-d') . '%')
             ->with('details', 'delivery')

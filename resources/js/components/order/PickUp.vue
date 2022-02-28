@@ -1,27 +1,79 @@
 <template>
     <div>
-        <h1 class="text-center">상품 코드 스캔</h1>
-        <StreamBarcodeReader
-            @decode="onDecode"
-        ></StreamBarcodeReader>
-        <b-card header="주문내역" class="mt-3">
-            <b-card-text>
-                <ul>
-                    <li v-for="item in items" v-bind:key="item.id">
-                        <span v-bind:class="{ pickup: item.picked === item.quantity }">
-                            {{ item.product_name }} ({{ item.picked }}/{{ item.quantity }})
-                        </span>
-                    </li>
-                </ul>
-                <b-row>
-                    <b-col class="text-center">
-                        <b-button variant="primary" @click="completedPickUp">
-                            상품 픽업 완료
-                        </b-button>
-                    </b-col>
-                </b-row>
-            </b-card-text>
-        </b-card>
+        <v-app-bar color="blue" dark app top absolte>
+            <v-app-bar-nav-icon @click.stop="drawer = !drawer">
+            </v-app-bar-nav-icon>
+            <v-toolbar-title>주문상세</v-toolbar-title>
+            <v-spacer></v-spacer>
+        </v-app-bar>
+        <v-navigation-drawer v-model="drawer" absolute temporary>
+            <v-list nav dense>
+                <v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
+                    <v-list-item>
+                        <v-list-item-title>{{ userName }}</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-list-item-title>
+                            <a class="dropdown-item" href="/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                Logout
+                            </a>
+                            <form id="logout-form" action="/logout" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        </v-list-item-title>
+                    </v-list-item>
+                </v-list-item-group>
+            </v-list>
+        </v-navigation-drawer>
+        <v-main>
+            <v-container>
+                <v-card>
+                    <v-card-title>배송정보</v-card-title>
+                    <v-card-text>
+                        <ul>
+                            <li>주문자명</li>
+                            <li>주문번호</li>
+                            <li>배송주소</li>
+                            <li>연락처</li>
+                            <li>배송메세지</li>
+                        </ul>
+                    </v-card-text>
+                </v-card>
+                <v-card class="mt-3">
+                    <v-card-title>주문내역</v-card-title>
+                    <v-card-text>
+                        <ul>
+                            <li v-for="item in items" v-bind:key="item.id">
+                                <span>{{ item.product_name }}</span>
+                                <span class="font-weight-bold">{{ item.quantity }}개</span>
+                            </li>
+                        </ul>
+                    </v-card-text>
+                </v-card>
+                <v-btn
+                    depressed
+                    color="primary"
+                    block
+                    x-large
+                    @click="completedPickUp"
+                    class="mt-3"
+                >배송시작</v-btn>
+            </v-container>
+        </v-main>
+        <v-bottom-navigation background-color="indigo" dark app bottom>
+            <v-btn>
+                <span>전체 주문</span>
+                <v-icon>mdi-reorder-horizontal</v-icon>
+            </v-btn>
+            <v-btn>
+                <span>내 주문</span>
+                <v-icon>mdi-inbox</v-icon>
+            </v-btn>
+            <v-btn>
+                <span>배송 내역</span>
+                <v-icon>mdi-history</v-icon>
+            </v-btn>
+        </v-bottom-navigation>
     </div>
 </template>
 
@@ -31,7 +83,7 @@ import { StreamBarcodeReader } from 'vue-barcode-reader';
 export default {
     name: 'PickUp',
 
-    props: ['orderId'],
+    props: ['orderId', 'userName'],
 
     components: { StreamBarcodeReader },
 
@@ -48,6 +100,8 @@ export default {
             loading: false,
             destroyed: false,
             id: null,
+            drawer: false,
+            group: null,
         }
     },
 

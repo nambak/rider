@@ -28,7 +28,7 @@
         <v-main>
             <v-list three-line v-if="items.length > 0">
                 <template v-for="(item, index) in items">
-                    <v-list-item :key="item.id">
+                    <v-list-item :key="item.id" @click="openOrderPickUp(item)">
                         <v-list-item-content>
                             <v-list-item-title v-html="item.buyer_name"></v-list-item-title>
                             <v-list-item-subtitle v-html="item.receiver_address_full"></v-list-item-subtitle>
@@ -36,7 +36,7 @@
                         </v-list-item-content>
                         <v-list-item-action>
                             <v-list-item-action-text class="mr-3">{{ item.region | regionForHuman }}</v-list-item-action-text>
-                            <div v-if="item.reservation !== '즉시배송'">
+                            <div v-if="item.delivery.reservation !== '즉시배송'">
                                 <v-chip color="yellow" small class="mt-1">예약배송</v-chip><br />
                                 <span class="ml-2 caption">20~21시</span>
                             </div>
