@@ -67,15 +67,20 @@ class OrderController extends Controller
 
     public function filterByBranch(BranchOffice $branch)
     {
-        return Order::whereHas('details', function ($query) use ($branch) {
-            $query->where('supplier_name', '=', $branch->name);
+        return Order::where(function ($query) use ($branch) {
+            $query->whereHas('details', function ($query) use ($branch) {
+                $query->where('supplier_name', $branch->name);
+            })->orWhere('branch_office_id', $branch->id);
+        })->where(function ($query) {
+            $query->whereNull('orders.status')
+                ->orWhere('orders.status', '=', '결제완료');
         })
             ->whereHas('delivery', function ($query) {
                 $query->whereNull('completed_at');
             })
-            ->where('order_date', 'LIKE', now()->format('Y-m-d') . '%')
-            ->with('details', 'delivery')
-            ->latest()
+            ->where('orders.order_date', 'LIKE', now()->format('Y-m-d') . '%')
+            ->with('details')
+            ->groupBy('orders.id')
             ->get();
     }
 

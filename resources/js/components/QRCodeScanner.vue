@@ -8,7 +8,7 @@
         </qrcode-stream>
         <b-card title="주문내역" v-if="data" class="mt-3 mb-3">
             <b-card-text>
-                <p>주문번호: {{ data.order_id }}</p>
+                <p>주문번호: {{ data.order_id || data.order_number }}</p>
                 <p>주문일: {{ data.order_date }}</p>
                 <p>고객명: {{ data.buyer_name }}</p>
                 <p>고객연락처: {{ data.buyer_cellphone }}</p>
