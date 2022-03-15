@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Notifications\DeliveryStartNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class DeliveryController extends Controller
 {
@@ -20,5 +22,9 @@ class DeliveryController extends Controller
     public function start(Order $order)
     {
         $order->delivery->update(['started_at' => now()]);
+
+        Notification::route('slack', config('logging.channels.slack.url'))
+            ->notify(new DeliveryStartNotification($order));
+
     }
 }

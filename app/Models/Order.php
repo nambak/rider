@@ -21,6 +21,11 @@ class Order extends Model
         return $this->hasOne(Delivery::class);
     }
 
+    public function branchOffice()
+    {
+        return $this->belongsTo(BranchOffice::class);
+    }
+
     public function getStateAttribute()
     {
         $state = '배송전';

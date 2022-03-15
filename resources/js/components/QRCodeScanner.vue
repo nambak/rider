@@ -25,6 +25,9 @@
             <template #empty="scope">
                 <div class="text-center">주문 내역이 없습니다.</div>
             </template>
+            <template #cell(order_id)="data">
+                {{ data.item.order_id || data.item.order_number }}
+            </template>
             <template #cell(reservation)="data">
                 {{ data.item.delivery.reservation }}
             </template>

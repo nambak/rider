@@ -86,9 +86,10 @@ export default {
             this.isLoading = true;
 
             try {
+                // cafe24 주문건인 경우 cafe24 api 사용
                 if (this.order_id) {
                     await axios.post(`https://deliver.10tenminute.xyz/api/persist_shipment`, {
-                        'order_number': this.order.order_id,
+                        'order_id': this.order.id,
                     });
                 }
 
@@ -127,7 +128,7 @@ export default {
 
         async getOrder() {
             try {
-                const response = await axios.get(`/api/order/${this.order.order_id}`);
+                const response = await axios.get(`/api/order/${this.order.id}`);
 
                 if (response.status === 200) {
                     this.data = response.data;

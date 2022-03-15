@@ -39,9 +39,14 @@ class CompletedOrder extends Notification
 
     public function toSlack($notifiable)
     {
+        if ($this->order->branchOffice) {
+            $channel = $this->order->branchOffice->name;
+        } else {
+            $channel = $this->order->details->first()->supplier_name;
+        }
         return (new SlackMessage)
             ->from('10min-bot')
-            ->to($this->order->details->first()->supplier_name)
+            ->to($channel)
             ->attachment(function ($attachment) {
                 $attachment->title('첨부이미지')
                     ->image($this->image);
