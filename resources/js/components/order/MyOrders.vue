@@ -87,7 +87,7 @@ export default {
 
             try {
                 // cafe24 주문건인 경우 cafe24 api 사용
-                if (this.order_id) {
+                if (this.order.order_id) {
                     await axios.post(`https://deliver.10tenminute.xyz/api/persist_shipment`, {
                         'order_id': this.order.id,
                     });

@@ -1,4 +1,4 @@
-@servers(['dev' => ['ubuntu@3.34.196.57']])
+@servers(['dev' => ['ubuntu@3.38.166.17']])
 
 @task('deploy', ['on' => 'dev'])
 cd /var/www/rider
