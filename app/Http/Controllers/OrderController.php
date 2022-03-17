@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Alimtalk;
 use App\Models\BranchOffice;
 use App\Models\Order;
 use App\Notifications\CompletedOrder;
@@ -56,6 +57,10 @@ class OrderController extends Controller
         }
 
         $imageUrl = $this->uploadImageToS3($request->image, $order);
+
+        Alimtalk::send('OJ001', [
+            '#{product}' => $order->generateTitle(),
+        ]);
 
         Notification::route('slack', config('logging.channels.slack.url'))
             ->notify(new CompletedOrder($order, $imageUrl));

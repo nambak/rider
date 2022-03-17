@@ -40,4 +40,11 @@ class Order extends Model
 
         return $state;
     }
+
+    public function generateTitle()
+    {
+        $title = $this->details[0]->product_name;
+
+        return ($this->details->count() > 1) ? $title . ' 외' . ($this->details->count() - 1) . '건' : $title;
+    }
 }

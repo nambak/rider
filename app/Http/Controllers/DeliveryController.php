@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Alimtalk;
 use App\Models\Order;
 use App\Notifications\DeliveryStartNotification;
 use Illuminate\Http\Request;
@@ -23,8 +24,12 @@ class DeliveryController extends Controller
     {
         $order->delivery->update(['started_at' => now()]);
 
+        Alimtalk::send('OG001', [
+            '#{order_number}' => $order->order_number,
+            '#{product}' => $order->generateTitle(),
+        ]);
+
         Notification::route('slack', config('logging.channels.slack.url'))
             ->notify(new DeliveryStartNotification($order));
-
     }
 }
