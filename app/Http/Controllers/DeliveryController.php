@@ -24,7 +24,7 @@ class DeliveryController extends Controller
     {
         $order->delivery->update(['started_at' => now()]);
 
-        Alimtalk::send('OG001', [
+        Alimtalk::send('OG001', $order->receiver_phone, [
             '#{order_number}' => $order->order_number,
             '#{product}' => $order->generateTitle(),
         ]);
