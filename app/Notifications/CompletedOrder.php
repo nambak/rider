@@ -57,7 +57,8 @@ class CompletedOrder extends Notification
     private function createMessage()
     {
         $message = "배달완료\n";
-        $message .= "주문번호: {$this->order->order_id}\n";
+
+        $message .= "주문번호: {$this->order->order_number}\n";
 
         return $message;
     }
