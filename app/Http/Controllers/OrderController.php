@@ -78,7 +78,7 @@ class OrderController extends Controller
             })->orWhere('branch_office_id', $branch->id);
         })->where(function ($query) {
             $query->whereNull('orders.status')
-                ->orWhere('orders.status', '=', '결제완료');
+                ->orWhere('orders.status', '!=', '결제대기');
         })
             ->whereHas('delivery', function ($query) {
                 $query->whereNull('completed_at');
