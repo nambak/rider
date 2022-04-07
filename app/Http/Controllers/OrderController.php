@@ -19,9 +19,17 @@ class OrderController extends Controller
 
     public function getOrderWithDetails($order)
     {
-        return Order::whereOrderNumber($order)
+        $result = Order::whereOrderNumber($order)
             ->with(['details', 'delivery'])
             ->first();
+
+        if (! $result) {
+            $result = Order::whereId($order)
+                ->with(['details', 'delivery'])
+                ->first();
+        }
+
+        return $result;
     }
 
     public function pickup(Order $order)
