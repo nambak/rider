@@ -17,9 +17,11 @@ use Illuminate\Support\Facades\Notification;
 class OrderController extends Controller
 {
 
-    public function getOrderWithDetails(Order $order)
+    public function getOrderWithDetails($order)
     {
-        return $order->load(['details', 'delivery']);
+        return Order::whereOrderNumber($order)
+            ->with(['details', 'delivery'])
+            ->first();
     }
 
     public function pickup(Order $order)
