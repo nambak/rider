@@ -46,4 +46,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(BranchOffice::class)->withTimestamps();
     }
+
+    public function mileages()
+    {
+        return $this->hasMany(Mileage::class);
+    }
 }

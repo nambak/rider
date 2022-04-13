@@ -53,19 +53,6 @@ class OrderController extends Controller
             return response('이미 완료된 주문 건 입니다.', 400);
         }
 
-        try {
-            $client = new Client();
-
-            $client->post('https://deliver.10tenminute.xyz/api/update_shipment_state', [
-                'json' => [
-                    'order_number' => $order->order_id,
-                    'state'        => 'shipped',
-                ],
-            ]);
-        } catch (Exception $exception) {
-            Log::error($exception->getMessage());
-        }
-
         $imageUrl = $this->uploadImageToS3($request->image, $order);
 
         Alimtalk::send('OJ001', $order->receiver_phone, [
@@ -76,6 +63,9 @@ class OrderController extends Controller
             ->notify(new CompletedOrder($order, $imageUrl));
 
         $order->delivery->update(['completed_at' => now()]);
+
+        // 적립금 지급
+        $order->depositMileage();
 
         return response('success', 200);
     }
