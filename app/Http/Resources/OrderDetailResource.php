@@ -17,10 +17,12 @@ class OrderDetailResource extends JsonResource
      */
     public function toArray($request)
     {
-        $goods = Goods::where('code', $this->custom_product_code)->first();
+        $barcodes = $this->goods->barcodes->pluck('barcode')->toArray();
+        array_push($barcodes, $this->goods->barcode);
+
         return [
-            'product_code' => $this->custom_product_code,
-            'barcode'      => (is_null($goods)) ? null : $goods->barcode,
+            'product_code' => $this->goods->code,
+            'barcode'      => implode(',', $barcodes),
             'product_name' => $this->product_name,
             'quantity'     => $this->quantity,
             'picked'       => 0,
