@@ -31,7 +31,7 @@ import { StreamBarcodeReader } from 'vue-barcode-reader';
 export default {
     name: 'PickUp',
 
-    props: ['orderId'],
+    props: ['orderId', 'userName'],
 
     components: { StreamBarcodeReader },
 
@@ -48,6 +48,8 @@ export default {
             loading: false,
             destroyed: false,
             id: null,
+            drawer: false,
+            group: null,
         }
     },
 

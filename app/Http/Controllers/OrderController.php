@@ -81,7 +81,7 @@ class OrderController extends Controller
                 ->orWhere('orders.status', '!=', '결제대기');
         })
             ->whereHas('delivery', function ($query) {
-                $query->whereNull('completed_at');
+                $query->whereNull('completed_at')->whereNull('started_at');
             })
             ->where('orders.order_date', 'LIKE', now()->format('Y-m-d') . '%')
             ->with('details')
