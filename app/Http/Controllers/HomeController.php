@@ -19,7 +19,7 @@ class HomeController extends Controller
 
     public function index()
     {
-        $branchOfficeID = isset(Auth::user()->employee) ? Auth::user()->employee->branch_id : null;
+        $branchOfficeID = isset(Auth::user()->employee) ? Auth::user()->employee->branch_id : Auth::user()->branch_office_id;
 
         if (Auth::user()->role == 'admin') {
             return redirect()->route('employee_list');
