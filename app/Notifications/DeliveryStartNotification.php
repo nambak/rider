@@ -2,34 +2,33 @@
 
 namespace App\Notifications;
 
+use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
 
-class CompletedOrder extends Notification
+class DeliveryStartNotification extends Notification
 {
     use Queueable;
 
-    public $order;
-    public $image;
+    private $order;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($order, $image)
+    public function __construct(Order $order)
     {
         $this->order = $order;
-        $this->image = $image;
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -41,25 +40,14 @@ class CompletedOrder extends Notification
     {
         if ($this->order->branchOffice) {
             $channel = $this->order->branchOffice->name;
+            $orderNumber = $this->order->order_number;
         } else {
             $channel = $this->order->details->first()->supplier_name;
+            $orderNumber = $this->order->order_id;
         }
         return (new SlackMessage)
             ->from('10min-bot')
             ->to($channel)
-            ->attachment(function ($attachment) {
-                $attachment->title('첨부이미지')
-                    ->image($this->image);
-            })
-            ->content($this->createMessage());
-    }
-
-    private function createMessage()
-    {
-        $message = "배달완료\n";
-
-        $message .= "주문번호: {$this->order->order_number}\n";
-
-        return $message;
+            ->content("주문번호 {$orderNumber} 배송이 시작되었습니다.");
     }
 }

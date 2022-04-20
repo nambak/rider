@@ -2,7 +2,7 @@
     <div>
         <b-card :header="order.state" :header-bg-variant="stateColor" header-text-variant="white" class="mb-5">
             <b-card-text>
-                <p>주문번호: {{ data.order_id }}</p>
+                <p>주문번호: {{ data.order_id || data.order_number }}</p>
                 <p>주문일: {{ data.order_date }}</p>
                 <p>고객명 : {{ data.buyer_name }}</p>
                 <p>고객연락처: {{ data.buyer_cellphone }}</p>
@@ -86,9 +86,12 @@ export default {
             this.isLoading = true;
 
             try {
-                await axios.post(`https://deliver.10tenminute.xyz/api/persist_shipment`, {
-                    'order_number': this.order.order_id,
-                });
+                // cafe24 주문건인 경우 cafe24 api 사용
+                if (this.order.order_id) {
+                    await axios.post(`https://deliver.10tenminute.xyz/api/persist_shipment`, {
+                        'order_id': this.order.id,
+                    });
+                }
 
                 await axios.post(`/api/order/${this.order.id}/start_delivery`);
                 location.reload();
@@ -125,7 +128,7 @@ export default {
 
         async getOrder() {
             try {
-                const response = await axios.get(`/api/order/${this.order.order_id}`);
+                const response = await axios.get(`/api/order/${this.order.id}`);
 
                 if (response.status === 200) {
                     this.data = response.data;

@@ -116,7 +116,7 @@ export default {
             let index = 0;
 
             if (this.isBarcode(goodsCode)) {
-                index = this.items.findIndex(item => item.barcode === goodsCode);
+                index = this.items.findIndex(item => item.barcode.indexOf(goodsCode) > -1 );
             } else {
                 index = this.items.findIndex(item => item.product_code === goodsCode);
             }

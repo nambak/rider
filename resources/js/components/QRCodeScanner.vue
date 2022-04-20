@@ -1,78 +1,45 @@
 <template>
     <div>
-        <v-app-bar color="blue" dark app top absolte>
-            <v-app-bar-nav-icon @click.stop="drawer = !drawer">
-            </v-app-bar-nav-icon>
-            <v-toolbar-title>전체주문</v-toolbar-title>
-            <v-spacer></v-spacer>
-        </v-app-bar>
-        <v-navigation-drawer v-model="drawer" absolute temporary>
-            <v-list nav dense>
-                <v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
-                    <v-list-item>
-                        <v-list-item-title>{{ userName }}</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
-                        <v-list-item-title>
-                            <a class="dropdown-item" href="/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                Logout
-                            </a>
-                            <form id="logout-form" action="/logout" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                        </v-list-item-title>
-                    </v-list-item>
-                </v-list-item-group>
-            </v-list>
-        </v-navigation-drawer>
-        <v-main>
-            <v-list three-line v-if="items.length > 0">
-                <template v-for="(item, index) in items">
-                    <v-list-item :key="item.id" @click="openOrderPickUp(item)">
-                        <v-list-item-content>
-                            <v-list-item-title v-html="item.buyer_name"></v-list-item-title>
-                            <v-list-item-subtitle v-html="item.receiver_address_full"></v-list-item-subtitle>
-                            <v-list-item-subtitle v-html="item.buyer_cellphone"></v-list-item-subtitle>
-                        </v-list-item-content>
-                        <v-list-item-action>
-                            <v-list-item-action-text class="mr-3">{{ item.region | regionForHuman }}</v-list-item-action-text>
-                            <div v-if="item.delivery.reservation !== '즉시배송'">
-                                <v-chip color="yellow" small class="mt-1">예약배송</v-chip><br />
-                                <span class="ml-2 caption">20~21시</span>
-                            </div>
-                            <div v-else>
-                                <v-chip small class="mt-1" color="blue" dark>즉시배송</v-chip>
-                            </div>
-                        </v-list-item-action>
-                    </v-list-item>
-                    <v-divider
-                        v-if="index < items.length - 1"
-                        :key="index"
-                    ></v-divider>
-                </template>
-            </v-list>
-            <v-container v-else>
-                <v-row style="height: 150px;">
-                    <v-col align-self="center">
-                        <div class="text-center">주문이 없습니다.</div>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-main>
-        <v-bottom-navigation background-color="indigo" dark app bottom>
-            <v-btn>
-                <span>전체 주문</span>
-                <v-icon>mdi-reorder-horizontal</v-icon>
-            </v-btn>
-            <v-btn>
-                <span>내 주문</span>
-                <v-icon>mdi-inbox</v-icon>
-            </v-btn>
-            <v-btn>
-                <span>배송 내역</span>
-                <v-icon>mdi-history</v-icon>
-            </v-btn>
-        </v-bottom-navigation>
+        <h1 class="text-center">주문서 QR코드 스캔</h1>
+        <qrcode-stream @decode="onDecode" :track="paintOutline" @init="onInit" v-if="!destroyed" class="qrcode">
+            <div class="loading-indicator" v-if="loading">
+                Loading...
+            </div>
+        </qrcode-stream>
+        <b-card title="주문내역" v-if="data" class="mt-3 mb-3">
+            <b-card-text>
+                <p>주문번호: {{ data.order_id || data.order_number }}</p>
+                <p>주문일: {{ data.order_date }}</p>
+                <p>고객명: {{ data.buyer_name }}</p>
+                <p>고객연락처: {{ data.buyer_cellphone }}</p>
+                <p>주소: {{ data.receiver_address_full }}</p>
+                <p>메세지: {{ data.shipping_message }}</p>
+            </b-card-text>
+            <b-row>
+                <b-col class="text-center">
+                    <b-button variant="primary" @click="getOrderPickUp">오더 픽업 하기</b-button>
+                </b-col>
+            </b-row>
+        </b-card>
+        <b-table striped bordered :items="orders" :fields="fields" head-variant="dark" show-empty>
+            <template #empty="scope">
+                <div class="text-center">주문 내역이 없습니다.</div>
+            </template>
+            <template #cell(order_id)="data">
+                {{ data.item.order_id || data.item.order_number }}
+            </template>
+            <template #cell(reservation)="data">
+                {{ data.item.delivery.reservation }}
+            </template>
+            <template #cell(action)="data">
+                <b-button
+                    variant="outline-primary"
+                    size="sm"
+                    @click="openOrderPickUp(data.item)"
+                    :disabled="isReservationTomorrow(data.item.delivery)"
+                >오더 픽업</b-button>
+            </template>
+        </b-table>
     </div>
 </template>
 
@@ -81,22 +48,59 @@
 export default {
     name: 'QRCodeScanner',
 
-    props: ['branchOfficeId', 'userName'],
+    props: ['branchOfficeId'],
 
     data() {
         return {
-            drawer: false,
-            group: null,
             data: null,
-            selected: [2],
-            items: [],
+            loading: false,
+            destroyed: false,
+            orders: [],
+            fields: [
+                {
+                    key: 'order_id',
+                    label: '주문번호',
+                    sortable: false,
+                    tdClass: 'align-middle',
+                    thClass: 'text-center',
+                },
+                {
+                    key: 'reservation',
+                    label: '배송시간',
+                    sortable: false,
+                    tdClass: 'align-middle',
+                    thClass: 'text-center',
+                },
+                {
+                    key: 'buyer_name',
+                    label: '주문자명',
+                    sortable: false,
+                    tdClass: 'align-middle',
+                    thClass: 'text-center',
+                },
+                {
+                    key: 'buyer_cellphone',
+                    label: '연락처',
+                    sortable: false,
+                    tdClass: 'align-middle',
+                    thClass: 'text-center',
+                },
+                {
+                    key: 'receiver_address_full',
+                    label: '배송주소',
+                    sortable: false,
+                    tdClass: 'align-middle',
+                    thClass: 'text-center',
+                },
+                {
+                    key: 'action',
+                    label: '',
+                    sortable: false,
+                    tdClass: 'align-middle',
+                    thClass: 'text-center',
+                }
+            ]
         }
-    },
-
-    watch: {
-        group () {
-            this.drawer = false
-        },
     },
 
     created() {
@@ -107,7 +111,7 @@ export default {
         async getOrders() {
             try{
                 const response = await axios.get(`/api/branch/${this.branchOfficeId}/orders`);
-                this.items = response.data;
+                this.orders = response.data;
             } catch (error) {
                 this.$swal({
                     icon: 'error',
@@ -193,14 +197,6 @@ export default {
                 return `${details[0].product_name} 외 ${details.length - 1} 건`;
             }
         },
-
-        regionForHuman(region) {
-            if (region === 'path' || region === 'blue') {
-                return '10~15분';
-            } else if (region === 'orange') {
-                return '15~25분';
-            }
-        }
     }
 }
 </script>

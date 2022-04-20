@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Alimtalk;
 use App\Models\BranchOffice;
 use App\Models\Order;
 use App\Notifications\CompletedOrder;
@@ -16,9 +17,19 @@ use Illuminate\Support\Facades\Notification;
 class OrderController extends Controller
 {
 
-    public function getOrderWithDetails($orderNumber)
+    public function getOrderWithDetails($order)
     {
-        return Order::where('order_id', $orderNumber)->with('details', 'delivery')->first();
+        $result = Order::whereOrderNumber($order)
+            ->with(['details', 'delivery'])
+            ->first();
+
+        if (! $result) {
+            $result = Order::whereId($order)
+                ->with(['details', 'delivery'])
+                ->first();
+        }
+
+        return $result;
     }
 
     public function pickup(Order $order)
@@ -42,40 +53,39 @@ class OrderController extends Controller
             return response('이미 완료된 주문 건 입니다.', 400);
         }
 
-        try {
-            $client = new Client();
-
-            $client->post('https://deliver.10tenminute.xyz/api/update_shipment_state', [
-                'json' => [
-                    'order_number' => $order->order_id,
-                    'state'        => 'shipped',
-                ],
-            ]);
-        } catch (Exception $exception) {
-            Log::error($exception->getMessage());
-        }
-
         $imageUrl = $this->uploadImageToS3($request->image, $order);
+
+        Alimtalk::send('OJ001', $order->receiver_phone, [
+            '#{product}' => $order->generateTitle(),
+        ]);
 
         Notification::route('slack', config('logging.channels.slack.url'))
             ->notify(new CompletedOrder($order, $imageUrl));
 
         $order->delivery->update(['completed_at' => now()]);
 
+        // 적립금 지급
+        $order->depositMileage();
+
         return response('success', 200);
     }
 
     public function filterByBranch(BranchOffice $branch)
     {
-        return Order::whereHas('details', function ($query) use ($branch) {
-            $query->where('supplier_name', '=', $branch->name);
+        return Order::where(function ($query) use ($branch) {
+            $query->whereHas('details', function ($query) use ($branch) {
+                $query->where('supplier_name', $branch->name);
+            })->orWhere('branch_office_id', $branch->id);
+        })->where(function ($query) {
+            $query->whereNull('orders.status')
+                ->orWhere('orders.status', '!=', '결제대기');
         })
             ->whereHas('delivery', function ($query) {
                 $query->whereNull('completed_at')->whereNull('started_at');
             })
-            ->where('order_date', 'LIKE', now()->format('Y-m-d') . '%')
-            ->with('details', 'delivery')
-            ->latest()
+            ->where('orders.order_date', 'LIKE', now()->format('Y-m-d') . '%')
+            ->with('details')
+            ->groupBy('orders.id')
             ->get();
     }
 

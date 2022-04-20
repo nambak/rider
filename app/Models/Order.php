@@ -22,6 +22,16 @@ class Order extends Model
         return $this->hasOne(Delivery::class);
     }
 
+    public function branchOffice()
+    {
+        return $this->belongsTo(BranchOffice::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function getStateAttribute()
     {
         $state = '배송전';
@@ -47,5 +57,20 @@ class Order extends Model
             ->first();
 
         return $result->type;
+    }
+
+    public function generateTitle()
+    {
+        $title = $this->details[0]->product_name;
+
+        return ($this->details->count() > 1) ? $title . ' 외' . ($this->details->count() - 1) . '건' : $title;
+    }
+
+    public function depositMileage()
+    {
+        $this->user->mileages()->create([
+            'reason' => '주문적립',
+            'amount' => (int) ceil(($this->actual_payment_amount - $this->shipping_fee) * 0.01),
+        ]);
     }
 }

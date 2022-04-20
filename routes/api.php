@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/order/{orderNumber}', [OrderController::class, 'getOrderWithDetails']);
+Route::get('/order/{order}', [OrderController::class, 'getOrderWithDetails']);
 Route::get('/order/{order}/details', [OrderDetailController::class, 'getOrderDetails']);
 Route::post('/order/{order}/completed', [OrderController::class, 'complete']);
 Route::post('/order/{order}/shipment', [OrderController::class, 'persistShipment']);
