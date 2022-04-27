@@ -28,6 +28,9 @@
             <template #cell(order_id)="data">
                 {{ data.item.order_id || data.item.order_number }}
             </template>
+            <template #cell(state)="data">
+                {{ data.item.delivery.state }}
+            </template>
             <template #cell(reservation)="data">
                 {{ data.item.delivery.reservation }}
             </template>
@@ -60,6 +63,13 @@ export default {
                 {
                     key: 'order_id',
                     label: '주문번호',
+                    sortable: false,
+                    tdClass: 'align-middle',
+                    thClass: 'text-center',
+                },
+                {
+                    key: 'state',
+                    label: '배송상태',
                     sortable: false,
                     tdClass: 'align-middle',
                     thClass: 'text-center',

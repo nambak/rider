@@ -6,10 +6,7 @@ use App\Alimtalk;
 use App\Models\BranchOffice;
 use App\Models\Order;
 use App\Notifications\CompletedOrder;
-use Exception;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Notification;
@@ -23,7 +20,7 @@ class OrderController extends Controller
             ->with(['details', 'delivery'])
             ->first();
 
-        if (! $result) {
+        if(! $result) {
             $result = Order::whereId($order)
                 ->with(['details', 'delivery'])
                 ->first();
@@ -81,7 +78,7 @@ class OrderController extends Controller
                 ->orWhere('orders.status', '!=', '결제대기');
         })
             ->whereHas('delivery', function ($query) {
-                $query->whereNull('completed_at')->whereNull('started_at');
+                $query->whereNull('completed_at');
             })
             ->where('orders.order_date', 'LIKE', now()->format('Y-m-d') . '%')
             ->with('details')
