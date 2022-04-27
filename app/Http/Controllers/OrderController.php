@@ -70,9 +70,7 @@ class OrderController extends Controller
     public function filterByBranch(BranchOffice $branch)
     {
         return Order::where(function ($query) use ($branch) {
-            $query->whereHas('details', function ($query) use ($branch) {
-                $query->where('supplier_name', $branch->name);
-            })->orWhere('branch_office_id', $branch->id);
+            $query->where('branch_office_id', $branch->id);
         })->where(function ($query) {
             $query->whereNull('orders.status')
                 ->orWhere('orders.status', '!=', '결제대기');
