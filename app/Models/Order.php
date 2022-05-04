@@ -68,9 +68,11 @@ class Order extends Model
 
     public function depositMileage()
     {
+        $mileageRate = StoreConfig::latest()->first()->mileage_rate / 100;
+
         $this->user->mileages()->create([
             'reason' => '주문적립',
-            'amount' => (int) ceil(($this->actual_payment_amount - $this->shipping_fee) * 0.01),
+            'amount' => (int) ceil(($this->actual_payment_amount - $this->shipping_fee) * $mileageRate),
         ]);
     }
 }
