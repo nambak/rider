@@ -61,8 +61,7 @@ class OrderController extends Controller
 
         $order->delivery->update(['completed_at' => now()]);
 
-        // 적립금 지급
-        $order->depositMileage();
+        // 적립금 지급 -> api 서버 App\Models\PayplePayment::booted() 참고
 
         return response('success', 200);
     }

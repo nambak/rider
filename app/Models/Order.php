@@ -65,14 +65,4 @@ class Order extends Model
 
         return ($this->details->count() > 1) ? $title . ' 외' . ($this->details->count() - 1) . '건' : $title;
     }
-
-    public function depositMileage()
-    {
-        $mileageRate = StoreConfig::latest()->first()->mileage_rate / 100;
-
-        $this->user->mileages()->create([
-            'reason' => '주문적립',
-            'amount' => (int) ceil(($this->actual_payment_amount - $this->shipping_fee) * $mileageRate),
-        ]);
-    }
 }
