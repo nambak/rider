@@ -7,9 +7,9 @@ use App\Models\BranchOffice;
 use App\Models\Order;
 use App\Notifications\CompletedOrder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
-use Illuminate\Support\Facades\Notification;
 
 class OrderController extends Controller
 {
@@ -20,7 +20,7 @@ class OrderController extends Controller
             ->with(['details', 'delivery'])
             ->first();
 
-        if(! $result) {
+        if (! $result) {
             $result = Order::whereId($order)
                 ->with(['details', 'delivery'])
                 ->first();
@@ -52,8 +52,9 @@ class OrderController extends Controller
 
         $imageUrl = $this->uploadImageToS3($request->image, $order);
 
-        Alimtalk::send('OJ002', $order->receiver_phone, [
-            '#{product}' => $order->generateTitle(),
+        Alimtalk::send('OJ003', $order->receiver_phone, [
+            '#{product}'      => $order->generateTitle(),
+            '#{order_number}' => $order->order_number,
         ]);
 
         Notification::route('slack', config('logging.channels.slack.url'))
