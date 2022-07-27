@@ -52,7 +52,7 @@ class OrderController extends Controller
 
         $imageUrl = $this->uploadImageToS3($request->image, $order);
 
-        Alimtalk::send('OJ003', $order->receiver_phone, [
+        Alimtalk::send('OJ005', $order->receiver_phone, [
             '#{product}'      => $order->generateTitle(),
             '#{order_number}' => $order->order_number,
         ]);
