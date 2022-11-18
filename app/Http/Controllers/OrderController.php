@@ -98,10 +98,5 @@ class OrderController extends Controller
             $resizedImage->__toString(),
             'public'
         );
-
-        $resultPath = 'https://s3.ap-northeast-2.amazonaws.com/10min.squad.mfc/order_completed_picture/'
-            . $fileName;
-
-        return $resultPath;
     }
 }

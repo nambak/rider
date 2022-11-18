@@ -45,7 +45,7 @@ class CompletedOrder extends Notification
             $channel = $this->order->details->first()->supplier_name;
         }
         return (new SlackMessage)
-            ->from('10min-bot')
+            ->from('bot')
             ->to($channel)
             ->attachment(function ($attachment) {
                 $attachment->title('첨부이미지')

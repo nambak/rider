@@ -4,8 +4,6 @@ namespace App\Notifications;
 
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
 
@@ -46,7 +44,7 @@ class DeliveryStartNotification extends Notification
             $orderNumber = $this->order->order_id;
         }
         return (new SlackMessage)
-            ->from('10min-bot')
+            ->from('bot')
             ->to($channel)
             ->content("주문번호 {$orderNumber} 배송이 시작되었습니다.");
     }
